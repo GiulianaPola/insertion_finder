@@ -10,9 +10,11 @@
     #log.write(warnings.formatwarning(message, category, filename, lineno, line))
 
 #warnings.showwarning = warn_with_traceback
+
 #python insertion_finder.py -query "NZ_EQ973357.fasta" -db "db/genomas.fasta"
 #python insertion_finder.py -query "PVBG01000001_1.fasta" -db "patric/Rhodo_Rhizo.fasta"
 #python insertion_finder.py -query "elements.fasta" -db "patric/Rhodo_Rhizo.fasta"
+
 import argparse
 import pandas as pd
 from Bio.Blast.Applications import NcbiblastnCommandline
@@ -25,15 +27,15 @@ ajuda = ajuda + '-query\tSequence to search with\n'
 ajuda = ajuda + '-db\tDatabase to BLAST against\n'
 ajuda = ajuda + '\nOptional parameters:\n'
 ajuda = ajuda + "-out\tOutput file (default: 'BLASTn_'+query filename+'.txt', 'elements_'+query filename+'.txt', query id+'_element.gb', query id+'_element.fasta')\n"
-ajuda = ajuda + "-minlen\tMinimum element's length (default: >=5000)\n"
-ajuda = ajuda + "-maxlen\tMaximum element's length (default: <=150.000)\n"
+ajuda = ajuda + "-min\tMinimum element's length (default: >=5000)\n"
+ajuda = ajuda + "-max\tMaximum element's length (default: <=150.000)\n"
 
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-query')
 parser.add_argument('-db')
 parser.add_argument('-out')
-parser.add_argument('-minlen')
-parser.add_argument('-maxlen')
+parser.add_argument('-min')
+parser.add_argument('-max')
 parser.add_argument('-h', '--help', action='store_true')
 args = parser.parse_args()
 
@@ -148,6 +150,17 @@ elif not args.query==None and not args.db==None:
   print("Opening BLAST table...")    
   
   tabular=open(str('elements.txt'),'w')
+  tabular.write("Query file: {}\n".format(args.query))
+  tabular.write("Database file: {}\n".format(args.db))
+  if args.min==None:
+    min=5000
+  else:
+    min=int(args.min)
+  if args.max==None:
+    max=150000
+  else:
+    max=int(args.max)
+  tabular.write("Element length: {0}-{1}\n".format(min,max))
   tabular.write("Query ID\tSubject ID\telement identification\telement 5' coordinate\telement 3' coordinate\telement length\n")
   
   for linha in blast_result.readlines():
@@ -190,15 +203,7 @@ elif not args.query==None and not args.db==None:
           element='yes'
           start,end=splitlist(contigs)
           estart,eend,elen=findelement(start,end,qlen)
-          if args.minlen==None:
-            minlen=5000
-          else:
-            minlen=int(args.minlen)
-          if args.maxlen==None:
-            maxlen=150000
-          else:
-            maxlen=int(args.maxlen)
-          if elen>=minlen and elen<=maxlen:
+          if elen>=min and elen<=max:
             econt+=1
             print("Query "+qry+" has element!")
             fasta=open(str(qry+'_element.fasta'),'w')
