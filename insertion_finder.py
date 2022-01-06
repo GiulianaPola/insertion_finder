@@ -18,6 +18,7 @@
 import argparse
 import pandas as pd
 from Bio.Blast.Applications import NcbiblastnCommandline
+import sys
 
 ajuda = 'InsertionFinder - element insertion locator in a genome through a BLAST search\n'
 ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
@@ -56,13 +57,13 @@ def splitfile(query):
 def extract(seq, estart, eend):
   return seq[int(estart-1):eend]
 
-def assembly(contigs):
-  contigs.sort(key = lambda x: x[0])
+def assembly(reads):
+  reads.sort(key = lambda x: x[0])
   m = []
   s = -10000
   max = -100000
-  for i in range(len(contigs)):
-      a = contigs[i]
+  for i in range(len(reads)):
+      a = reads[i]
       if a[0] > max:
           if i != 0:
               m.append([s,max])
@@ -89,7 +90,7 @@ def splitlist(joined):
     list2.append(i[1])
   return list1,list2
 
-def findelement(start,end,qlen):
+def findelement(start,end):
   maxdist=0
   print("Calculating element's coordinates...")
   for k in range(len(end)-1):     
@@ -104,36 +105,21 @@ def findelement(start,end,qlen):
   elen=eend-estart
   return estart,eend,elen
 
-if args.help == True:
+if not len(sys.argv)>1:
+    print(ajuda)
+elif args.help == True:
     print(ajuda)
 elif not args.query==None and not args.db==None:
-  if args.out == None:
-    if not args.query==None:
-      if args.query.count("/")>0:
-        nome=args.query.split("/")[-1]
-        nome=nome.split(".")[0]
-        saida='BLASTn_'+nome+".txt"
-      else:
-        nome=args.query.split(".")[0]
-        saida='BLASTn_'+nome+".txt"
-  else:
-    if args.out.count(".")>0:
-      nome=nome.split(".")[0]
-    else:
-      nome=args.out
-    saida=args.out
-    
-  if args.db==None:
-    db="nt"
-  else:
-    db=args.db
+  
+  saida="blastn.tab"
+  db=args.db
 
   qfastas=splitfile(args.query)
   #print(sorted(qfastas.keys()))
 
   comando_blastn = NcbiblastnCommandline( \
   query=args.query, db=db, \
-  outfmt="'7 qseqid sseqid qcovs sstrand score qlen slen qstart qend sstart send pident'", out=str(saida),num_threads=10)
+  outfmt="'7 qseqid sseqid qcovs sstrand score qlen slen qstart qend sstart send pident'", out="blastn.tab",num_threads=10)
  
   # Executando
   stdout, stderr = comando_blastn()
@@ -196,35 +182,39 @@ elif not args.query==None and not args.db==None:
         df1=df1.sort_values(by=[filtro],ascending=False)
         sbj=df1['subject id'].tolist()[0]
         df1=df.loc[(df['subject id'] == sbj)&(df['query id'] == qry)]
-        df1[['% query coverage per subject','score','q. start','q. end']]=df1[['% query coverage per subject','score','q. start','q. end']].apply(pd.to_numeric)
-        df1=df1.sort_values(by=['q. start','q. end'])
-        contigs=assembly(joinlists(df1['q. start'].tolist(),df1['q. end'].tolist()))
-        if len(contigs)>1:
-          element='yes'
-          start,end=splitlist(contigs)
-          estart,eend,elen=findelement(start,end,qlen)
-          if elen>=min and elen<=max:
-            econt+=1
-            print("Query "+qry+" has element!")
-            fasta=open(str(qry+'_element.fasta'),'w')
-            fasta.write(">{0} - element - {1}-{2}\n".format(qry,estart,eend))
-            fasta.write(extract(qfastas[qry],estart,eend))
-            fasta.close()
-            ft=open(str(qry+'_element.gb'),'w')
-            print("Writing element's feature table...")
-            ft.write("     misc_feature    {0}..{1}\n".format(eend,estart))
-            ft.write("                     /label=element\n")
-            ft.write("                     /color=255 8 234\n")
-            ft.close()
-            tabular.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".format(qry,sbj,element,estart,eend,elen))
-          else:
-            print("Query "+qry+" has no elements!")
-            element='no'
-            tabular.write("{0}\t{1}\t{2}\t\t\t\n".format(qry,sbj,element))
-        else:
-          element='no'
+        if len(df1)==1:
           print("Query "+qry+" has no elements!")
+          element='no'
           tabular.write("{0}\t{1}\t{2}\t\t\t\n".format(qry,sbj,element))
+        else:
+          df1[['% query coverage per subject','score','q. start','q. end']]=df1[['% query coverage per subject','score','q. start','q. end']].apply(pd.to_numeric)
+          contigs=assembly(sorted(joinlists(df1['q. start'].tolist(),df1['q. end'].tolist())))
+          if len(contigs)>1:
+            element='yes'
+            start,end=splitlist(contigs)
+            estart,eend,elen=findelement(start,end)
+            if elen>=min and elen<=max:
+              econt+=1
+              print("Query "+qry+" has element!")
+              fasta=open(str(qry+'_element.fasta'),'w')
+              fasta.write(">{0} - element - {1}-{2}\n".format(qry,estart,eend))
+              fasta.write(extract(qfastas[qry],estart,eend))
+              fasta.close()
+              ft=open(str(qry+'_element.gb'),'w')
+              print("Writing element's feature table...")
+              ft.write("     misc_feature    {0}..{1}\n".format(eend,estart))
+              ft.write("                     /label=element\n")
+              ft.write("                     /color=255 8 234\n")
+              ft.close()
+              tabular.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".format(qry,sbj,element,estart,eend,elen))
+            else:
+              print("Query "+qry+" has no elements!")
+              element='no'
+              tabular.write("{0}\t{1}\t{2}\t\t\t\n".format(qry,sbj,element))
+          else:
+            element='no'
+            print("Query "+qry+" has no elements!")
+            tabular.write("{0}\t{1}\t{2}\t\t\t\n".format(qry,sbj,element))
       linhas=[]
       colunas=[]
       qry=''
