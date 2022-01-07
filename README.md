@@ -1,4 +1,23 @@
-# insertion_finder
+# insertion_finder - element insertion finder in a genome through a BLAST search
+(c) 2021. Arthur Gruber & Giuliana Pola
+
+Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST against
+
+**Mandatory parameters:**
+
+* *-q* (file) Sequence to search with
+
+* *-d* (file) Database to BLAST against
+
+**Optional parameters:**
+  
+* *-o* (path)   Output directory
+  
+* *-min* (int)    Minimum element's length in base pairs(bp) (default: >=5000)
+
+* *-max* (int)    Maximum element's length in base pairs(bp) (default: <=150.000)
+
+
 ## 06/01/2022
 - adição dos campos “query file”, “database file” e “element length” no cabeçalho do “elements.txt” (arquivo que mostra as coordenadas e o tamanho dos elementos) para informar os parâmetros utilizados na busca
 - exibição do menu de ajuda quando o usuário não informa nenhum parâmetro
