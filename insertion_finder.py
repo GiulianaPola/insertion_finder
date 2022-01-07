@@ -21,9 +21,9 @@ from Bio.Blast.Applications import NcbiblastnCommandline
 import sys
 import os
 
-ajuda = 'InsertionFinder - element insertion locator in a genome through a BLAST search\n'
+ajuda = 'InsertionFinder - element insertion finder in a genome through a BLAST search\n'
 ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
-ajuda = ajuda + 'Usage: insertion_finder.py -query <sequence to search with> -db <database to BLAST against> -out <output file> \n'
+ajuda = ajuda + 'Usage: insertion_finder.py -q <sequence to search with> -d <database to BLAST against>\n'
 ajuda = ajuda + '\nMandatory parameters:\n'
 ajuda = ajuda + '-q <file>\tSequence to search with\n'
 ajuda = ajuda + '-d <file>\tDatabase to BLAST against\n'
