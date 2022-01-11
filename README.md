@@ -26,9 +26,15 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 
 ## 07/01/2022
 - adição do tipo de dados de cada parâmetro no menu ajuda
-- verificação da existência dos arquivos de query e database e do diretório output, parâmetros “query”, “db” e “out”
 - criação do diretório de saída caso ele não exista com o comando “os.mkdir”, quando o parâmetro “out” é informado 
 - criação dos arquivos “blastn.tab” e “elements.txt” dentro do diretório output com os comandos “open” e “os.path.join”
 - criação de um diretório para cada query com o comando “os.mkdir”
 - criação dos arquivos fasta e feature table do elemento dentro da pasta com o nome da query com os comandos “open” e “os.path.join”
 - alteração do nome dos parâmetros de “out”, “db”, “query” para “o”, “d” e “q”, respectivamente
+
+## 10/01/2022
+- validação do parâmetros
+- verificação da existência dos arquivos de query e database e do diretório output, parâmetros “query”, “db” e “out”
+- adição dos avisos no “file.log”
+- criação do “output_dir” caso o parâmetro “o” não for informado
+- adição da coluna “valid” na tabela “elements”
