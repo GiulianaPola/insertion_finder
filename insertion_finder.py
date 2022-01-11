@@ -1,15 +1,15 @@
 #!/usr/bin/python
-#import traceback
-#import warnings
-#import sys
+import traceback
+import warnings
+import sys
 
-#def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
+def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
 
-    #log = file if hasattr(file,'write') else sys.stderr
-    #traceback.print_stack(file=log)
-    #log.write(warnings.formatwarning(message, category, filename, lineno, line))
+    log = file if hasattr(file,'write') else sys.stderr
+    traceback.print_stack(file=log)
+    log.write(warnings.formatwarning(message, category, filename, lineno, line))
 
-#warnings.showwarning = warn_with_traceback
+warnings.showwarning = warn_with_traceback
 
 #python insertion_finder.py -query "NZ_EQ973357.fasta" -db "db/genomas.fasta"
 #python insertion_finder.py -query "PVBG01000001_1.fasta" -db "patric/Rhodo_Rhizo.fasta"
@@ -111,7 +111,7 @@ def validateargs(args):
   param=dict()
 
   if not args.o==None:
-    if os.path.isfile(args.o):
+    if os.path.isdir(args.o):
       param['o']=args.o
     else:
       try:
@@ -232,6 +232,7 @@ elif args.help == False:
         elen=0
         if not linhas==[]:
           df=pd.DataFrame(columns=colunas,data=linhas)
+          df=df.apply(pd.to_numeric, errors='ignore')
           log+="Searching element for "+qry+"...\n"
           df1=df[['query id','query length','subject id','% query coverage per subject','score','% identity']].drop_duplicates()
           df1[['query length','% query coverage per subject','score','% identity']] = df1[['query length','% query coverage per subject','score','% identity']].apply(pd.to_numeric)
@@ -246,7 +247,6 @@ elif args.help == False:
             element='no'
             tabular.write("{0}\t{1}\t{2}\t\t\t\t{3}\n".format(qry,sbj,element,'no'))
           else:
-            df1[['% query coverage per subject','score','q. start','q. end']]=df1[['% query coverage per subject','score','q. start','q. end']].apply(pd.to_numeric)
             contigs=assembly(sorted(joinlists(df1['q. start'].tolist(),df1['q. end'].tolist())))
             if len(contigs)>1:
               element='yes'

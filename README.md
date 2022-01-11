@@ -38,3 +38,6 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 - adição dos avisos no “file.log”
 - criação do “output_dir” caso o parâmetro “o” não for informado
 - adição da coluna “valid” na tabela “elements”
+
+## 11/01/2022
+- correção da mensagem de erro “A value is trying to be set on a copy of a slice from a DataFrame”
