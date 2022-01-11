@@ -15,7 +15,7 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
   
 * *-min* (int)    Minimum element's length in base pairs(bp) (default: >=5000)
 
-* *-max* (int)    Maximum element's length in base pairs(bp) (default: <=150.000)
+* *-max* (int)    Maximum element's length in base pairs(bp) (default: <=150000)
 
 
 ## 06/01/2022
