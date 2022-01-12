@@ -1,6 +1,6 @@
 Query file: elements.fasta
 Database file: patric/Rhodo_Rhizo.fasta
-Element length: 5000-150000
+Element valid length: 5000-150000
 query ID	subject ID	element identification	element 5' coordinate	element 3' coordinate	element length	valid
 AP014801_1	AP014801	no				no
 PGTC01000017_1	FWFN01000002	no				no

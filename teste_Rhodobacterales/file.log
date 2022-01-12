@@ -1,290 +1,785 @@
-Opening BLAST table...
+Query file: elements.fasta
+Database file: patric/Rhodo_Rhizo.fasta
+Element valid length: 5000-150000
 
-Query AP014801_1 has 47 hits!
-Searching element for AP014801_1...
-Query AP014801_1 has no elements!
+Query id	AP014801_1
+47 hits!
+Query length	20310
+subject id                      MSYP01000003
+% query coverage per subject              69
+subject length                        102835
+score                                  13032
+% identity                            97.443
+Query has no elements!
 
-Query PGTC01000017_1 has 1022 hits!
-Searching element for PGTC01000017_1...
-Query PGTC01000017_1 has no elements!
+Query id	PGTC01000017_1
+1022 hits!
+Query length	21279
+subject id                      AFPM01000156
+% query coverage per subject              42
+subject length                         38215
+score                                   4153
+% identity                           81.3571
+Query has no elements!
 
-Query PHJF01000001_1 has 305 hits!
-Searching element for PHJF01000001_1...
-Calculating element's coordinates...
-Query PHJF01000001_1 has element!
+Query id	PHJF01000001_1
+305 hits!
+Query length	20336
+subject id                      LNVY01000015
+% query coverage per subject              18
+subject length                        448052
+score                                   1498
+% identity                           81.3317
+Alignments	[[1478, 2698], [3847, 4985], [16005, 16940], [17010, 17897]]
+Query has element!
+Element coodinates	4986 - 16004
+Element length	11018
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query PVBG01000001_1 has 1187 hits!
-Searching element for PVBG01000001_1...
-Calculating element's coordinates...
-Query PVBG01000001_1 has element!
+Query id	PVBG01000001_1
+1187 hits!
+Query length	27088
+subject id                      JPYQ01000006
+% query coverage per subject              50
+subject length                        980555
+score                                   6585
+% identity                           83.3657
+Alignments	[[52, 7409], [20718, 27088]]
+Query has element!
+Element coodinates	7410 - 20717
+Element length	13307
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query PXYL01000009_1 has 201 hits!
-Searching element for PXYL01000009_1...
-Calculating element's coordinates...
-Query PXYL01000009_1 has element!
+Query id	PXYL01000009_1
+201 hits!
+Query length	9495
+subject id                      FPCK01000001
+% query coverage per subject              17
+subject length                       1963998
+score                                    409
+% identity                            76.818
+Alignments	[[623, 1014], [2885, 3564]]
+Query has element!
+Element coodinates	1015 - 2884
+Element length	1869
+Invalid element!
 
-Query QITQ01000003_1 has 833 hits!
-Searching element for QITQ01000003_1...
-Calculating element's coordinates...
-Query QITQ01000003_1 has element!
+Query id	QITQ01000003_1
+833 hits!
+Query length	20672
+subject id                      JAFT01000005
+% query coverage per subject              26
+subject length                       3826627
+score                                   2151
+% identity                            79.527
+Alignments	[[864, 2196], [3668, 3953], [4016, 5139], [5215, 7417], [14635, 15528], [15733, 16609], [17611, 19800], [19871, 20625]]
+Query has element!
+Element coodinates	7418 - 14634
+Element length	7216
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query QKLQ01000002_1 has 840 hits!
-Searching element for QKLQ01000002_1...
-Calculating element's coordinates...
-Query QKLQ01000002_1 has element!
+Query id	QKLQ01000002_1
+840 hits!
+Query length	15236
+subject id                      CP020910
+% query coverage per subject          18
+subject length                    543095
+score                               3017
+% identity                       86.1465
+Alignments	[[29, 1437], [2102, 5195], [13175, 13474], [13519, 15070], [13519, 15070]]
+Query has element!
+Element coodinates	5196 - 13174
+Element length	7978
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UBJJ01000006_1 has 1165 hits!
-Searching element for UBJJ01000006_1...
-Calculating element's coordinates...
-Query UBJJ01000006_1 has element!
+Query id	UBJJ01000006_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UBJU01000006_1 has 1165 hits!
-Searching element for UBJU01000006_1...
-Calculating element's coordinates...
-Query UBJU01000006_1 has element!
+Query id	UBJU01000006_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14164
+% identity                       99.9725
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UBKN01000010_1 has 982 hits!
-Searching element for UBKN01000010_1...
-Calculating element's coordinates...
-Query UBKN01000010_1 has element!
+Query id	UBKN01000010_1
+982 hits!
+Query length	19990
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 6609], [12491, 19990]]
+Query has element!
+Element coodinates	6610 - 12490
+Element length	5880
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UBLC01000026_1 has 1171 hits!
-Searching element for UBLC01000026_1...
-Calculating element's coordinates...
-Query UBLC01000026_1 has element!
+Query id	UBLC01000026_1
+1171 hits!
+Query length	19985
+subject id                      HG518322
+% query coverage per subject          71
+subject length                   2844565
+score                              14179
+% identity                       99.9725
+Alignments	[[1, 4639], [4722, 7417], [7924, 8630], [8793, 19985]]
+Query has element!
+Element coodinates	7418 - 7923
+Element length	505
+Invalid element!
 
-Query UBMP01000028_1 has no hits!
+Query id	UBMP01000028_1
+No hits!
 
-Query UBNJ01000012_1 has 1165 hits!
-Searching element for UBNJ01000012_1...
-Calculating element's coordinates...
-Query UBNJ01000012_1 has element!
+Query id	UBNJ01000012_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14164
+% identity                       99.9725
+Alignments	[[1, 9244], [9384, 11300], [11503, 12210], [12700, 15410], [15493, 20131]]
+Query has element!
+Element coodinates	12211 - 12699
+Element length	488
+Invalid element!
 
-Query UBOI01000009_1 has 1171 hits!
-Searching element for UBOI01000009_1...
-Calculating element's coordinates...
-Query UBOI01000009_1 has element!
+Query id	UBOI01000009_1
+1171 hits!
+Query length	19985
+subject id                      HG518322
+% query coverage per subject          71
+subject length                   2844565
+score                              14179
+% identity                       99.9725
+Alignments	[[1, 11193], [11356, 12062], [12569, 15264], [15347, 19985]]
+Query has element!
+Element coodinates	12063 - 12568
+Element length	505
+Invalid element!
 
-Query UBOL01000015_1 has 1171 hits!
-Searching element for UBOL01000015_1...
-Calculating element's coordinates...
-Query UBOL01000015_1 has element!
+Query id	UBOL01000015_1
+1171 hits!
+Query length	19985
+subject id                      HG518322
+% query coverage per subject          71
+subject length                   2844565
+score                              14179
+% identity                       99.9725
+Alignments	[[1, 11193], [11356, 12062], [12569, 15264], [15347, 19985]]
+Query has element!
+Element coodinates	12063 - 12568
+Element length	505
+Invalid element!
 
-Query UBRW01000003_1 has 1165 hits!
-Searching element for UBRW01000003_1...
-Calculating element's coordinates...
-Query UBRW01000003_1 has element!
+Query id	UBRW01000003_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14164
+% identity                       99.9725
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UBRZ01000021_1 has 505 hits!
-Searching element for UBRZ01000021_1...
-Calculating element's coordinates...
-Query UBRZ01000021_1 has element!
+Query id	UBRZ01000021_1
+505 hits!
+Query length	13201
+subject id                      MKRF01000033
+% query coverage per subject              31
+subject length                         53282
+score                                   1592
+% identity                           79.8893
+Alignments	[[32, 6172], [6444, 7259]]
+Query has element!
+Element coodinates	6173 - 6443
+Element length	270
+Invalid element!
 
-Query UBSC01000005_1 has 982 hits!
-Searching element for UBSC01000005_1...
-Calculating element's coordinates...
-Query UBSC01000005_1 has element!
+Query id	UBSC01000005_1
+982 hits!
+Query length	19990
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 7500], [13382, 19990]]
+Query has element!
+Element coodinates	7501 - 13381
+Element length	5880
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UBSM01000003_1 has 1171 hits!
-Searching element for UBSM01000003_1...
-Calculating element's coordinates...
-Query UBSM01000003_1 has element!
+Query id	UBSM01000003_1
+1171 hits!
+Query length	19985
+subject id                      HG518322
+% query coverage per subject          71
+subject length                   2844565
+score                              14179
+% identity                       99.9725
+Alignments	[[1, 11193], [11356, 12062], [12569, 15264], [15347, 19985]]
+Query has element!
+Element coodinates	12063 - 12568
+Element length	505
+Invalid element!
 
-Query UBSX01000010_1 has 1165 hits!
-Searching element for UBSX01000010_1...
-Calculating element's coordinates...
-Query UBSX01000010_1 has element!
+Query id	UBSX01000010_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 9244], [9384, 11300], [11503, 12210], [12700, 15410], [15493, 20131]]
+Query has element!
+Element coodinates	12211 - 12699
+Element length	488
+Invalid element!
 
-Query UBTD01000025_1 has 615 hits!
-Searching element for UBTD01000025_1...
-Calculating element's coordinates...
-Query UBTD01000025_1 has element!
+Query id	UBTD01000025_1
+615 hits!
+Query length	14022
+subject id                      LXKY01000027
+% query coverage per subject              30
+subject length                        447769
+score                                   4834
+% identity                             93.92
+Alignments	[[1, 1499], [9818, 14022]]
+Query has element!
+Element coodinates	1500 - 9817
+Element length	8317
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UBTO01000001_1 has 1165 hits!
-Searching element for UBTO01000001_1...
-Calculating element's coordinates...
-Query UBTO01000001_1 has element!
+Query id	UBTO01000001_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UBTW01000009_1 has 1165 hits!
-Searching element for UBTW01000009_1...
-Calculating element's coordinates...
-Query UBTW01000009_1 has element!
+Query id	UBTW01000009_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 9244], [9384, 11300], [11503, 12210], [12700, 15410], [15493, 20131]]
+Query has element!
+Element coodinates	12211 - 12699
+Element length	488
+Invalid element!
 
-Query UBUF01000003_1 has 982 hits!
-Searching element for UBUF01000003_1...
-Calculating element's coordinates...
-Query UBUF01000003_1 has element!
+Query id	UBUF01000003_1
+982 hits!
+Query length	19990
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 7500], [13382, 19990]]
+Query has element!
+Element coodinates	7501 - 13381
+Element length	5880
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UBUI01000001_1 has 1165 hits!
-Searching element for UBUI01000001_1...
-Calculating element's coordinates...
-Query UBUI01000001_1 has element!
+Query id	UBUI01000001_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UBVP01000023_1 has 615 hits!
-Searching element for UBVP01000023_1...
-Calculating element's coordinates...
-Query UBVP01000023_1 has element!
+Query id	UBVP01000023_1
+615 hits!
+Query length	14022
+subject id                      LXKY01000027
+% query coverage per subject              30
+subject length                        447769
+score                                   4834
+% identity                             93.92
+Alignments	[[1, 1499], [9818, 14022]]
+Query has element!
+Element coodinates	1500 - 9817
+Element length	8317
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UBXH01000007_1 has 1165 hits!
-Searching element for UBXH01000007_1...
-Calculating element's coordinates...
-Query UBXH01000007_1 has element!
+Query id	UBXH01000007_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UBXJ01000012_1 has 1165 hits!
-Searching element for UBXJ01000012_1...
-Calculating element's coordinates...
-Query UBXJ01000012_1 has element!
+Query id	UBXJ01000012_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14164
+% identity                       99.9725
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UBXW01000014_1 has 615 hits!
-Searching element for UBXW01000014_1...
-Calculating element's coordinates...
-Query UBXW01000014_1 has element!
+Query id	UBXW01000014_1
+615 hits!
+Query length	14022
+subject id                      LXKY01000027
+% query coverage per subject              30
+subject length                        447769
+score                                   4834
+% identity                             93.92
+Alignments	[[1, 4205], [12524, 14022]]
+Query has element!
+Element coodinates	4206 - 12523
+Element length	8317
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UBYD01000001_1 has 982 hits!
-Searching element for UBYD01000001_1...
-Calculating element's coordinates...
-Query UBYD01000001_1 has element!
+Query id	UBYD01000001_1
+982 hits!
+Query length	19990
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 7500], [13382, 19990]]
+Query has element!
+Element coodinates	7501 - 13381
+Element length	5880
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UBYJ01000012_1 has 1165 hits!
-Searching element for UBYJ01000012_1...
-Calculating element's coordinates...
-Query UBYJ01000012_1 has element!
+Query id	UBYJ01000012_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 9244], [9384, 11300], [11503, 12210], [12700, 15410], [15493, 20131]]
+Query has element!
+Element coodinates	12211 - 12699
+Element length	488
+Invalid element!
 
-Query UBYQ01000001_1 has 1165 hits!
-Searching element for UBYQ01000001_1...
-Calculating element's coordinates...
-Query UBYQ01000001_1 has element!
+Query id	UBYQ01000001_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 9244], [9384, 11300], [11503, 12210], [12700, 15410], [15493, 20131]]
+Query has element!
+Element coodinates	12211 - 12699
+Element length	488
+Invalid element!
 
-Query UBZI01000007_1 has 982 hits!
-Searching element for UBZI01000007_1...
-Calculating element's coordinates...
-Query UBZI01000007_1 has element!
+Query id	UBZI01000007_1
+982 hits!
+Query length	19990
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 6609], [12491, 19990]]
+Query has element!
+Element coodinates	6610 - 12490
+Element length	5880
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UCBN01000002_1 has 1165 hits!
-Searching element for UCBN01000002_1...
-Calculating element's coordinates...
-Query UCBN01000002_1 has element!
+Query id	UCBN01000002_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UCBT01000010_1 has 982 hits!
-Searching element for UCBT01000010_1...
-Calculating element's coordinates...
-Query UCBT01000010_1 has element!
+Query id	UCBT01000010_1
+982 hits!
+Query length	19990
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 7500], [13382, 19990]]
+Query has element!
+Element coodinates	7501 - 13381
+Element length	5880
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UCCL01000012_1 has 1171 hits!
-Searching element for UCCL01000012_1...
-Calculating element's coordinates...
-Query UCCL01000012_1 has element!
+Query id	UCCL01000012_1
+1171 hits!
+Query length	19985
+subject id                      HG518322
+% query coverage per subject          71
+subject length                   2844565
+score                              14179
+% identity                       99.9725
+Alignments	[[1, 11193], [11356, 12062], [12569, 15264], [15347, 19985]]
+Query has element!
+Element coodinates	12063 - 12568
+Element length	505
+Invalid element!
 
-Query UCCP01000006_1 has 982 hits!
-Searching element for UCCP01000006_1...
-Calculating element's coordinates...
-Query UCCP01000006_1 has element!
+Query id	UCCP01000006_1
+982 hits!
+Query length	19990
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 7500], [13382, 19990]]
+Query has element!
+Element coodinates	7501 - 13381
+Element length	5880
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UCCT01000001_1 has 1165 hits!
-Searching element for UCCT01000001_1...
-Calculating element's coordinates...
-Query UCCT01000001_1 has element!
+Query id	UCCT01000001_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14164
+% identity                       99.9725
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UCDE01000019_1 has 1165 hits!
-Searching element for UCDE01000019_1...
-Calculating element's coordinates...
-Query UCDE01000019_1 has element!
+Query id	UCDE01000019_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UCEJ01000005_1 has 1171 hits!
-Searching element for UCEJ01000005_1...
-Calculating element's coordinates...
-Query UCEJ01000005_1 has element!
+Query id	UCEJ01000005_1
+1171 hits!
+Query length	19985
+subject id                      HG518322
+% query coverage per subject          71
+subject length                   2844565
+score                              14179
+% identity                       99.9725
+Alignments	[[1, 4639], [4722, 7417], [7924, 8630], [8793, 19985]]
+Query has element!
+Element coodinates	7418 - 7923
+Element length	505
+Invalid element!
 
-Query UCGM01000006_1 has 1165 hits!
-Searching element for UCGM01000006_1...
-Calculating element's coordinates...
-Query UCGM01000006_1 has element!
+Query id	UCGM01000006_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UCHW01000004_1 has 1165 hits!
-Searching element for UCHW01000004_1...
-Calculating element's coordinates...
-Query UCHW01000004_1 has element!
+Query id	UCHW01000004_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14164
+% identity                       99.9725
+Alignments	[[1, 9244], [9384, 11300], [11503, 12210], [12700, 15410], [15493, 20131]]
+Query has element!
+Element coodinates	12211 - 12699
+Element length	488
+Invalid element!
 
-Query UCID01000013_1 has 703 hits!
-Searching element for UCID01000013_1...
-Calculating element's coordinates...
-Query UCID01000013_1 has element!
+Query id	UCID01000013_1
+703 hits!
+Query length	20033
+subject id                      LMVJ01000001
+% query coverage per subject              29
+subject length                       1435066
+score                                   5519
+% identity                           96.6645
+Alignments	[[792, 6400], [12522, 12651]]
+Query has element!
+Element coodinates	6401 - 12521
+Element length	6120
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UCIZ01000008_1 has 1171 hits!
-Searching element for UCIZ01000008_1...
-Calculating element's coordinates...
-Query UCIZ01000008_1 has element!
+Query id	UCIZ01000008_1
+1171 hits!
+Query length	19985
+subject id                      HG518322
+% query coverage per subject          71
+subject length                   2844565
+score                              14179
+% identity                       99.9725
+Alignments	[[1, 4639], [4722, 7417], [7924, 8630], [8793, 19985]]
+Query has element!
+Element coodinates	7418 - 7923
+Element length	505
+Invalid element!
 
-Query UCJE01000001_1 has 704 hits!
-Searching element for UCJE01000001_1...
-Calculating element's coordinates...
-Query UCJE01000001_1 has element!
+Query id	UCJE01000001_1
+704 hits!
+Query length	20033
+subject id                      MRDG01000005
+% query coverage per subject              33
+subject length                       1309925
+score                                   6289
+% identity                           96.3605
+Alignments	[[7383, 7512], [13634, 20033]]
+Query has element!
+Element coodinates	7513 - 13633
+Element length	6120
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UCKX01000006_1 has 979 hits!
-Searching element for UCKX01000006_1...
-Calculating element's coordinates...
-Query UCKX01000006_1 has element!
+Query id	UCKX01000006_1
+979 hits!
+Query length	19984
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 6609], [12485, 19984]]
+Query has element!
+Element coodinates	6610 - 12484
+Element length	5874
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UCLI01000001_1 has 1171 hits!
-Searching element for UCLI01000001_1...
-Calculating element's coordinates...
-Query UCLI01000001_1 has element!
+Query id	UCLI01000001_1
+1171 hits!
+Query length	19985
+subject id                      HG518322
+% query coverage per subject          71
+subject length                   2844565
+score                              14179
+% identity                       99.9725
+Alignments	[[1, 11193], [11356, 12062], [12569, 15264], [15347, 19985]]
+Query has element!
+Element coodinates	12063 - 12568
+Element length	505
+Invalid element!
 
-Query UCMP01000002_1 has 982 hits!
-Searching element for UCMP01000002_1...
-Calculating element's coordinates...
-Query UCMP01000002_1 has element!
+Query id	UCMP01000002_1
+982 hits!
+Query length	19990
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 6609], [12491, 19990]]
+Query has element!
+Element coodinates	6610 - 12490
+Element length	5880
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UCNT01000005_1 has 1165 hits!
-Searching element for UCNT01000005_1...
-Calculating element's coordinates...
-Query UCNT01000005_1 has element!
+Query id	UCNT01000005_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14164
+% identity                       99.9725
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UCOE01000005_1 has 1165 hits!
-Searching element for UCOE01000005_1...
-Calculating element's coordinates...
-Query UCOE01000005_1 has element!
+Query id	UCOE01000005_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UEGU01000015_1 has 982 hits!
-Searching element for UEGU01000015_1...
-Calculating element's coordinates...
-Query UEGU01000015_1 has element!
+Query id	UEGU01000015_1
+982 hits!
+Query length	19990
+subject id                      MRDG01000005
+% query coverage per subject              71
+subject length                       1309925
+score                                  13634
+% identity                           98.8895
+Alignments	[[1, 6609], [12491, 19990]]
+Query has element!
+Element coodinates	6610 - 12490
+Element length	5880
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
-Query UEGZ01000045_1 has no hits!
+Query id	UEGZ01000045_1
+No hits!
 
-Query UEHM01000002_1 has 1165 hits!
-Searching element for UEHM01000002_1...
-Calculating element's coordinates...
-Query UEHM01000002_1 has element!
+Query id	UEHM01000002_1
+1165 hits!
+Query length	20131
+subject id                      HG518322
+% query coverage per subject          70
+subject length                   2844565
+score                              14167
+% identity                         99.98
+Alignments	[[1, 4639], [4722, 7432], [7922, 8629], [8832, 10748], [10888, 20131]]
+Query has element!
+Element coodinates	7433 - 7921
+Element length	488
+Invalid element!
 
-Query UEHP01000003_1 has 553 hits!
-Searching element for UEHP01000003_1...
-Calculating element's coordinates...
-Query UEHP01000003_1 has element!
+Query id	UEHP01000003_1
+553 hits!
+Query length	20448
+subject id                      LMOT01000006
+% query coverage per subject              66
+subject length                       1135884
+score                                  11537
+% identity                           96.8447
+Alignments	[[1, 6709], [7356, 7448], [8532, 9564], [9564, 9962], [13764, 20448]]
+Query has element!
+Element coodinates	9963 - 13763
+Element length	3800
+Invalid element!
 
-Query UICO01000009_1 has 359 hits!
-Searching element for UICO01000009_1...
-Calculating element's coordinates...
-Query UICO01000009_1 has element!
+Query id	UICO01000009_1
+359 hits!
+Query length	19987
+subject id                      NC_015183
+% query coverage per subject           38
+subject length                    2823930
+score                                7138
+% identity                        98.1935
+Alignments	[[6508, 6563], [12492, 19987]]
+Query has element!
+Element coodinates	6564 - 12491
+Element length	5927
+Valid element!
 Writing element's feature table...
+Writing element's fasta...
 
 Processed 55 queries with 20 valid elements

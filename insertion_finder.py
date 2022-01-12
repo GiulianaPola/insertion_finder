@@ -17,14 +17,15 @@ warnings.showwarning = warn_with_traceback
 
 import argparse
 import pandas as pd
+from Bio import SeqIO
 from Bio.Blast.Applications import NcbiblastnCommandline
 import sys
 import os
-log=''
+log=[]
 
 ajuda = 'insertion_finder - element insertion finder in a genome through a BLAST search\n'
 ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
-ajuda = ajuda + 'Usage: insertion_finder.py -q <query file> -d <database file>\n'
+ajuda = ajuda + 'Usage\tinsertion_finder.py -q <query file> -d <database file>\n'
 ajuda = ajuda + '\nMandatory parameters:\n'
 ajuda = ajuda + '-q <file>\tSequence to search with\n'
 ajuda = ajuda + '-d <file>\tDatabase to BLAST against\n'
@@ -32,35 +33,30 @@ ajuda = ajuda + '\nOptional parameters:\n'
 ajuda = ajuda + "-o <path>\tOutput directory\n"
 ajuda = ajuda + "-min <int>\tMinimum element's length in base pairs(bp) (default: >=5000)\n"
 ajuda = ajuda + "-max <int>\tMaximum element's length in base pairs(bp) (default: <=150000)\n"
+ajuda = ajuda + "-c <int>\tElement RGB color that is shown by the feature table (default: 255,0,0)"
 
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-q')
 parser.add_argument('-d')
 parser.add_argument('-o')
+parser.add_argument('-c')
 parser.add_argument('-min')
 parser.add_argument('-max')
 parser.add_argument('-h', '--help', action='store_true')
 args = parser.parse_args()
 
-def splitfile(query):
-  qfastas=dict()
-  arquivo=open(query,"r")
-  linhas=arquivo.readlines()
-  for i in range(len(linhas)):
-    if ">" in linhas[i]:
-      head=linhas[i][1:]
-      if " " in head:
-        qid=head.split(" ")[0]
-      else:
-        qid=head[0:-1]
-      qfastas[qid]=linhas[i+1]
-  return qfastas
+def isfasta(filename):
+    with open(filename, "r") as handle:
+        fasta = SeqIO.parse(handle, "fasta")
+        return any(fasta)
   
-def extract(seq, estart, eend):
+def extract(qseqs, qid, estart, eend):
+  lin=qseqs[0:qseqs.find(qid)].count("\n")+1
+  seq=qseqs.split("\n")[lin]
   return seq[int(estart-1):eend]
 
 def assembly(reads):
-  reads.sort(key = lambda x: x[0])
+  reads.sort()
   m = []
   s = -10000
   max = -100000
@@ -94,7 +90,7 @@ def splitlist(joined):
 
 def findelement(start,end):
   maxdist=0
-  for k in range(len(end)-1):     
+  for k in range(len(end)-1): 
     distance=start[k+1]-end[k]
     if distance>maxdist:
       #print("maxdist=",distance)
@@ -116,7 +112,7 @@ def validateargs(args):
     else:
       try:
         os.mkdir(args.o)
-        print("Creating output directory {}...\n".format(args.o))
+        print("Creating output directory {}...".format(args.o))
         param['o']=args.o
       except:
         print("Output directory not valid\n")
@@ -128,7 +124,7 @@ def validateargs(args):
       i+=1
       out='output_dir'+str(i)
     os.mkdir(out)
-    print("Creating output directory {}...\n".format(out))
+    print("Creating output directory {}...".format(out))
     param['o']=out
   
   if args.q==None:
@@ -139,7 +135,11 @@ def validateargs(args):
      print("Query file not exist!\n")
      valid=False
    else:
-     param['q']=args.q
+     if isfasta(args.q):
+       param['q']=args.q
+     else:
+       print("Invalid query file, invalid fasta formatting!\n")
+       valid=False
   
   if args.d==None:
     print("Missing database file!\n")
@@ -149,7 +149,11 @@ def validateargs(args):
      print("Database file not exist!\n")
      valid=False
    else:
-     param['d']=args.d
+     if isfasta(args.d):
+       param['d']=args.d
+     else:
+       print("Invalid query file, invalid fasta formatting!\n")
+       valid=False
   
   if args.min==None:
     param['min']=5000
@@ -168,6 +172,25 @@ def validateargs(args):
     except:
       print("Maximum element's length is not integer\n")
       valid=False
+  
+  if args.c==None:
+    param['c']=[255,0,0]
+  else:
+      try:
+        if args.c.count(",")==2:
+          param['c']=[]
+          for num in args.c.split(","):
+            if int(num)>=0 & int(num)<=255:
+              param['c'].append(int(num))
+            else:
+              print("Invalid element RGB color!\n")
+              valid=False
+        else:
+          print("Invalid element RGB color!\n")
+          valid=False
+      except:
+        print("Invalid element RGB color!\n")
+        valid=False
     
   return valid,param
 
@@ -180,105 +203,122 @@ elif args.help == False:
   valid,param=validateargs(args)
   if valid==False:
     print(ajuda)
-  else:   
-    qfastas=splitfile(param['q'])
-    #print(sorted(qfastas.keys()))
     
-    comando_blastn = NcbiblastnCommandline( \
-    query=param['q'], db=param['d'], \
-    outfmt="'7 qseqid sseqid qcovs sstrand score qlen slen qstart qend sstart send pident'", out=os.path.join(param['o'], "blastn.tab"),num_threads=10)
-   
-    # Executando
-    stdout, stderr = comando_blastn()
-   
-    # Abrindo resultado
-    blast_result = open(os.path.join(param['o'], "blastn.tab"),"r")
-    linhas=[]
-    colunas=[]
-    cont=0
-    econt=0
-    qry=''
-    element=''
+  else:
+    qseqs=open(param['q'], "r").read()
     
-    log+="Opening BLAST table...\n"   
-    
-    tabular=open(os.path.join(param['o'], 'elements.txt'),'w')
-    tabular.write("Query file: {}\n".format(param['q']))
-    tabular.write("Database file: {}\n".format(param['d']))
-    tabular.write("Element length: {0}-{1}\n".format(param['min'],param['max']))
-    tabular.write("query ID\tsubject ID\telement identification\telement 5' coordinate\telement 3' coordinate\telement length\tvalid\n")
-    
-    for linha in blast_result.readlines():
-      linha=linha.replace('\n','')
-      if 'Query:' in linha:
-        qry=linha.split(': ')[1]
-        cont+=1
-      if 'Fields:' in linha:
-        colunas=linha.split(': ')[1]
-        colunas=colunas.split(', ')
-      if 'hits' in linha:
-        if int(linha.split(' ')[1])==0:
-          element='no'
-          sbj='no hits'
-          tabular.write("{0}\t{1}\t{2}\t\t\t\t{3}\n".format(qry,sbj,element,'no'))
-          log+='\nQuery '+qry+' has no hits!\n'
-        else:
-          log+='\nQuery '+qry+' has '+linha.split(' ')[1]+' hits!\n'
-      if not '#' in linha:
-        linhas.append(linha.split('\t'))
-      if '# BLAST' in linha and not qry=='':
-        estart=0
-        eend=0
-        elen=0
-        if not linhas==[]:
-          df=pd.DataFrame(columns=colunas,data=linhas)
-          df=df.apply(pd.to_numeric, errors='ignore')
-          log+="Searching element for "+qry+"...\n"
-          df1=df[['query id','query length','subject id','% query coverage per subject','score','% identity']].drop_duplicates()
-          df1[['query length','% query coverage per subject','score','% identity']] = df1[['query length','% query coverage per subject','score','% identity']].apply(pd.to_numeric)
-          qlen=df1['query length'].tolist()[0]
-          filtro='score'
-          df1=df1.groupby('subject id').agg({filtro:'sum'}).reset_index()
-          df1=df1.sort_values(by=[filtro],ascending=False)
-          sbj=df1['subject id'].tolist()[0]
-          df1=df.loc[(df['subject id'] == sbj)&(df['query id'] == qry)]
-          if len(df1)==1:
-            log+="Query "+qry+" has no elements!\n"
+    try:
+      comando_blastn = NcbiblastnCommandline( \
+      query=param['q'], db=param['d'], \
+      outfmt="'7 qseqid sseqid qcovs sstrand score qlen slen qstart qend sstart send pident'", out=os.path.join(param['o'], "blastn.tab"),num_threads=10)
+      # Executando
+      stdout, stderr = comando_blastn()
+     
+      # Abrindo resultado
+      blast_result = open(os.path.join(param['o'], "blastn.tab"),"r")
+      linhas=[]
+      colunas=[]
+      cont=0
+      econt=0
+      qid=''
+      element=''
+      print("Opening BLASTn table...")   
+    except:
+      print("The BLASTn search was not completed successfully!")
+    else:
+      tabular=open(os.path.join(param['o'], 'elements.txt'),'w')
+      tabular.write("Query file: {}\n".format(param['q']))
+      log.append(("Query file: {}".format(param['q'])))
+      tabular.write("Database file: {}\n".format(param['d']))
+      log.append("Database file: {}".format(param['d']))
+      tabular.write("Element valid length: {0}-{1}\n".format(param['min'],param['max']))
+      log.append("Element valid length: {0}-{1}".format(param['min'],param['max']))
+      tabular.write("query ID\tsubject ID\telement identification\telement 5' coordinate\telement 3' coordinate\telement length\tvalid\n")
+      
+      for linha in blast_result.readlines():
+        linha=linha.replace('\n','')
+        if 'Query:' in linha:
+          qid=linha.split(': ')[1]
+          log.append("\nQuery id\t{}".format(qid))
+          cont+=1
+        if 'Fields:' in linha:
+          colunas=linha.split(': ')[1]
+          colunas=colunas.split(', ')
+        if 'hits' in linha:
+          if int(linha.split(' ')[1])==0:
             element='no'
-            tabular.write("{0}\t{1}\t{2}\t\t\t\t{3}\n".format(qry,sbj,element,'no'))
+            sid='no hits'
+            tabular.write("{0}\t{1}\t{2}\t\t\t\t{3}\n".format(qid,sid,element,'no'))
+            log.append('No hits!')
           else:
-            contigs=assembly(sorted(joinlists(df1['q. start'].tolist(),df1['q. end'].tolist())))
-            if len(contigs)>1:
-              element='yes'
-              start,end=splitlist(contigs)
-              estart,eend,elen=findelement(start,end)
-              log+="Calculating element's coordinates...\n"
-              log+="Query "+qry+" has element!\n"
-              if elen>=param['min'] and elen<=param['max']:
-                os.mkdir(os.path.join(param['o'], qry))
-                tabular.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n".format(qry,sbj,element,estart,eend,elen,'yes'))
-                ft=open(os.path.join(param['o'], qry, str(qry+'_element.gb')),'w')
-                fasta=open(os.path.join(param['o'], qry, str(qry+'_element.fasta')),'w')
-                fasta.write(">{0} - element - {1}-{2}\n".format(qry,estart,eend))
-                fasta.write(extract(qfastas[qry],estart,eend))
-                fasta.close()
-                log+="Writing element's feature table...\n"
-                ft.write("     misc_feature    {0}..{1}\n".format(eend,estart))
-                ft.write("                     /label=element\n")
-                ft.write("                     /color=255 8 234\n")
-                ft.close()
-                econt+=1
-              else:
-                tabular.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n".format(qry,sbj,element,estart,eend,elen,'no'))
-            else:
-              log+="Query "+qry+" has no elements!\n"
+            log.append('{} hits!'.format(linha.split(' ')[1]))
+        if not '#' in linha:
+          linhas.append(linha.split('\t'))
+        if '# BLAST' in linha and not qid=='':
+          estart=0
+          eend=0
+          elen=0
+          if not linhas==[]:
+            df=pd.DataFrame(columns=colunas,data=linhas)
+            df=df.apply(pd.to_numeric, errors='ignore')
+            df1=df[['query id','query length','subject id','subject length','% query coverage per subject','score','% identity']].drop_duplicates()
+            qlen=df1['query length'].tolist()[0]
+            log.append("Query length\t{}".format(qlen))
+            filtro='score'
+            df1=df1.groupby('subject id').agg({'subject length':'mean',filtro:'sum','% query coverage per subject':'mean','% identity':'mean'}).reset_index()
+            df1=df1.sort_values(by=[filtro],ascending=False)
+            sid=df1['subject id'].tolist()[0]
+            log.extend(str(df1.iloc[1]).split('\n')[:-1])
+            df1=df.loc[(df['subject id'] == sid)&(df['query id'] == qid)]
+            if len(df1)==1:
+              log.append("Query has no elements!")
               element='no'
-              tabular.write("{0}\t{1}\t{2}\t\t\t\t{3}\n".format(qry,sbj,element,'no'))
-        linhas=[]
-        colunas=[]
-        qry=''
-        element=''
-    log+='\nProcessed '+str(cont)+' queries with '+str(econt)+' valid elements\n'
-    tabular.close()
-    erros=open(os.path.join(param['o'], 'file.log'),'w')
-    erros.write(log)
+              tabular.write("{0}\t{1}\t{2}\t\t\t\t{3}\n".format(qid,sid,element,'no'))
+            else:
+              reads=sorted(joinlists(df1['q. start'].tolist(),df1['q. end'].tolist()))
+              contigs=assembly(reads)
+              log.append("Alignments\t{}".format(str(reads)))
+              if len(contigs)>1:
+                element='yes'
+                start,end=splitlist(contigs)
+                estart,eend,elen=findelement(start,end)
+                log.append("Query has element!")
+                log.append("Element coodinates\t{} - {}".format(estart,eend))
+                log.append("Element length\t{}".format(elen))
+                if elen>=param['min'] and elen<=param['max']:
+                  log.append("Valid element!")
+                  os.mkdir(os.path.join(param['o'], qid))
+                  tabular.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n".format(qid,sid,element,estart,eend,elen,'yes'))
+                  try:
+                    log.append("Writing element's feature table...")
+                    ft=open(os.path.join(param['o'], qid, str(qid+'_element.gb')),'w')
+                    ft.write("     misc_feature    {0}..{1}\n".format(eend,estart))
+                    ft.write("                     /label=element\n")
+                    ft.write("                     /color={} {} {}\n".format(param['c'][0],param['c'][1],param['c'][2]))
+                    ft.close()
+                  except:
+                    log.append("Element's feature table was't writen!")
+                  try:
+                    log.append("Writing element's fasta...")
+                    fasta=open(os.path.join(param['o'], qid, str(qid+'_element.fasta')),'w')
+                    fasta.write(">{0} - element - {1}-{2}\n".format(qid,estart,eend))
+                    fasta.write(extract(qseqs, qid, estart, eend))
+                    fasta.close()
+                  except:
+                    log.append("Element's fasta was't writen!")
+                  econt+=1
+                else:
+                  log.append("Invalid element!")
+                  tabular.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n".format(qid,sid,element,estart,eend,elen,'no'))
+              else:
+                log.append("Query has no elements!")
+                element='no'
+                tabular.write("{0}\t{1}\t{2}\t\t\t\t{3}\n".format(qid,sid,element,'no'))
+          linhas=[]
+          colunas=[]
+          qid=''
+          element=''
+      log.append('\nProcessed {} queries with {} valid elements'.format(cont,econt))
+      tabular.close()
+      erros=open(os.path.join(param['o'], 'file.log'),'w')
+      erros.write('\n'.join(str(v) for v in log))

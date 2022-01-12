@@ -41,3 +41,9 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 
 ## 11/01/2022
 - correção da mensagem de erro “A value is trying to be set on a copy of a slice from a DataFrame”
+- correção da validação dos arquivos query e database usando a verificação do formato fasta a partir do comando “SeqIO.parse”
+- correção na extração da sequência do elemento a partir do arquivo query no formato fasta ⇒ busca dentro do arquivo query
+- adição dos dados do hit e do subject no “file.log”
+- adição da validação da busca BLASTn e aviso caso erro
+- adição do parâmetro “c”, a cor RGB do elemento na feature table
+- erro na validação do parâmetro “c”
