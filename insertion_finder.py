@@ -25,15 +25,15 @@ log=[]
 
 ajuda = 'insertion_finder - element insertion finder in a genome through a BLAST search\n'
 ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
-ajuda = ajuda + 'Usage\tinsertion_finder.py -q <query file> -d <database file>\n'
+ajuda = ajuda + 'Usage: insertion_finder.py -q <query file> -d <database file>\n'
 ajuda = ajuda + '\nMandatory parameters:\n'
 ajuda = ajuda + '-q <file>\tSequence to search with\n'
 ajuda = ajuda + '-d <file>\tDatabase to BLAST against\n'
 ajuda = ajuda + '\nOptional parameters:\n'
-ajuda = ajuda + "-o <path>\tOutput directory\n"
+ajuda = ajuda + "-o <path>\tOutput directory (default: output_dir1)\n"
 ajuda = ajuda + "-min <int>\tMinimum element's length in base pairs(bp) (default: >=5000)\n"
 ajuda = ajuda + "-max <int>\tMaximum element's length in base pairs(bp) (default: <=150000)\n"
-ajuda = ajuda + "-c <int>\tElement RGB color that is shown by the feature table (default: 255,0,0)"
+ajuda = ajuda + "-c <int>\tElement RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)"
 
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-q')
@@ -105,54 +105,33 @@ def findelement(start,end):
 def validateargs(args):
   valid=True
   param=dict()
-
-  if not args.o==None:
-    if os.path.isdir(args.o):
-      param['o']=args.o
-    else:
-      try:
-        os.mkdir(args.o)
-        print("Creating output directory {}...".format(args.o))
-        param['o']=args.o
-      except:
-        print("Output directory not valid\n")
-        valid=False
-  else:
-    i=1
-    out='output_dir1'
-    while os.path.isdir(out):
-      i+=1
-      out='output_dir'+str(i)
-    os.mkdir(out)
-    print("Creating output directory {}...".format(out))
-    param['o']=out
   
   if args.q==None:
-    print("Missing query file!\n")
+    print("Missing query file!")
     valid=False
   elif not args.q==None:
    if not os.path.isfile(args.q):
-     print("Query file not exist!\n")
+     print("Query file not exist!")
      valid=False
    else:
      if isfasta(args.q):
        param['q']=args.q
      else:
-       print("Invalid query file, invalid fasta formatting!\n")
+       print("Invalid query file, invalid fasta formatting!")
        valid=False
   
   if args.d==None:
-    print("Missing database file!\n")
+    print("Missing database file!")
     valid=False
   elif not args.d==None:
    if not os.path.isfile(args.d):
-     print("Database file not exist!\n")
+     print("Database file not exist!")
      valid=False
    else:
      if isfasta(args.d):
        param['d']=args.d
      else:
-       print("Invalid query file, invalid fasta formatting!\n")
+       print("Invalid database file, invalid fasta formatting!")
        valid=False
   
   if args.min==None:
@@ -180,7 +159,8 @@ def validateargs(args):
         if args.c.count(",")==2:
           param['c']=[]
           for num in args.c.split(","):
-            if int(num)>=0 & int(num)<=255:
+            n=int(num)
+            if n>=0 and n<=255:
               param['c'].append(int(num))
             else:
               print("Invalid element RGB color!\n")
@@ -192,10 +172,32 @@ def validateargs(args):
         print("Invalid element RGB color!\n")
         valid=False
     
+  if valid==True:
+   if not args.o==None:
+     if os.path.isdir(args.o):
+       print("Output directory {} exists!".format(args.o))
+       param['o']=args.o
+     else:
+       try:
+         os.mkdir(args.o)
+         print("Creating output directory {}...".format(args.o))
+         param['o']=args.o
+       except:
+         print("Output directory not valid\n")
+         valid=False
+   else:
+     i=1
+     out='output_dir1'
+     while os.path.isdir(out):
+       i+=1
+       out='output_dir'+str(i)
+     os.mkdir(out)
+     print("Creating output directory {}...".format(out))
+     param['o']=out
+    
   return valid,param
 
 if not len(sys.argv)>1:
-    print("Missing all arguments!\n")
     print(ajuda)
 elif args.help == True:
     print(ajuda)
@@ -292,7 +294,7 @@ elif args.help == False:
                   try:
                     log.append("Writing element's feature table...")
                     ft=open(os.path.join(param['o'], qid, str(qid+'_element.gb')),'w')
-                    ft.write("     misc_feature    {0}..{1}\n".format(eend,estart))
+                    ft.write("     misc_feature    {0}..{1}\n".format(estart,eend))
                     ft.write("                     /label=element\n")
                     ft.write("                     /color={} {} {}\n".format(param['c'][0],param['c'][1],param['c'][2]))
                     ft.close()

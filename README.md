@@ -17,6 +17,7 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 
 * *-max* (int)    Maximum element's length in base pairs(bp) (default: <=150000)
 
+* *-c* (int)  Element RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)
 
 ## 06/01/2022
 - adição dos campos “query file”, “database file” e “element length” no cabeçalho do “elements.txt” (arquivo que mostra as coordenadas e o tamanho dos elementos) para informar os parâmetros utilizados na busca
@@ -47,3 +48,6 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 - adição da validação da busca BLASTn e aviso caso erro
 - adição do parâmetro “c”, a cor RGB do elemento na feature table
 - erro na validação do parâmetro “c”
+
+##12/01/2022
+- correção da validação do parâmetro “c”
