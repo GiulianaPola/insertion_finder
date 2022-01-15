@@ -3,21 +3,31 @@
 
 Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST against
 
+*insertion_finder.py -q* query file *-tab* BLASTn table file
+
 **Mandatory parameters:**
 
-* *-q* (file) Sequence to search with
+* *-q* (fasta or multifasta file) - Sequence to search with
 
-* *-d* (file) Database to BLAST against
+* *-d* (multifasta file) - Database to BLAST against
+or
+* *-tab* (table file) - BLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)
 
 **Optional parameters:**
   
-* *-o* (path)   Output directory
+* *-o* (path) - Output directory
   
-* *-min* (int)    Minimum element's length in base pairs(bp) (default: >=5000)
+* *-minlen* (int) - Minimum element's length in base pairs(bp) (default: 5000)
 
-* *-max* (int)    Maximum element's length in base pairs(bp) (default: <=150000)
+* *-maxlen* (int) - Maximum element's length in base pairs(bp) (default: 150000)
 
-* *-c* (int)  Element RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)
+* *-mincov* (int) - Minimum % query coverage per subject (default: 30)
+
+* *-maxcov* (int) - Maximum % query coverage per subject (default: 90)
+
+* *-enddist* (int) - Maximum distance between block tip and query tip in base pairs(bp) (default: 1000)
+
+* *-c* (int) - Element RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)
 
 ## 06/01/2022
 - adição dos campos “query file”, “database file” e “element length” no cabeçalho do “elements.txt” (arquivo que mostra as coordenadas e o tamanho dos elementos) para informar os parâmetros utilizados na busca
@@ -49,5 +59,17 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 - adição do parâmetro “c”, a cor RGB do elemento na feature table
 - erro na validação do parâmetro “c”
 
-##12/01/2022
+## 12/01/2022
 - correção da validação do parâmetro “c”
+
+## 14/01/2022
+- ordenação dos hits por % de cobertura por subject
+- alteração do nome dos parâmetros min e max para minlen e maxlen, tamanho mínimo e máximo do elemento
+- alteração do tamanho máximo padrão do elemento (max) para 50.000
+- adição do parâmetro enddist, distância máxima entre a extremidade do bloco e da query para que o elemento seja aceito quando tiver apenas 1 bloco
+- adição dos parâmetros mincov e maxcov, % mínima e máxima de cobertura da query
+- validação do alinhamento para 1 bloco
+- validação da distância máxima entre o bloco e a query quando há só 1 bloco
+- criação da pasta nome-de-pasta_2 quando a pasta informada no parâmetro out já existir
+- alteração do tamanho mínimo padrão (minlen) para 4000
+- adição do parâmetro tab, tabela com resultado da busca BLASTn

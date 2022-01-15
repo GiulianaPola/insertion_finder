@@ -1,0 +1,63 @@
+Query file: teste.fasta
+Database file: patric/microviridae_Patric.fasta
+Element valid length: 4000-50000
+Valid % query coverage per subject: 30-90
+
+Query id	ASYJ01000020_1
+904 hits!
+Query length	19407
+subject id                      FTRB01000003
+% query coverage per subject              77
+subject length                        403606
+Alignments	[[1, 7462], [11921, 12114], [12075, 18952], [18941, 19407]]
+Query has element!
+Element coodinates	7463 - 11920
+Element length	4457
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id	AQCH01000070_1
+678 hits!
+Query length	21145
+subject id                      LNWY01000014
+% query coverage per subject              73
+subject length                        322835
+Alignments	[[1, 7759], [13544, 21145]]
+Query has element!
+Element coodinates	7760 - 13543
+Element length	5783
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id	AGZN01000032_1
+193 hits!
+Query length	12411
+subject id                      QSJN01000002
+% query coverage per subject              63
+subject length                        478015
+Alignments	[[1, 7808]]
+One block alignment!
+Query has element!
+Element coodinates	7809 - 12411
+Element length	4602
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id	ARBZ01000001_1
+327 hits!
+Query length	19550
+subject id                      NZ_GG740056
+% query coverage per subject             43
+subject length                       738566
+Alignments	[[1, 1058], [11852, 19245]]
+Query has element!
+Element coodinates	1059 - 11851
+Element length	10792
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Processed 4 queries with 4 valid elements
