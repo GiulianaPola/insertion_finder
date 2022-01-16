@@ -19,15 +19,17 @@ or
   
 * *-minlen* (int) - Minimum element's length in base pairs(bp) (default: 5000)
 
-* *-maxlen* (int) - Maximum element's length in base pairs(bp) (default: 150000)
+* *-maxlen* (int) - Maximum element's length in base pairs(bp) (default: 50000)
 
 * *-mincov* (int) - Minimum % query coverage per subject (default: 30)
 
 * *-maxcov* (int) - Maximum % query coverage per subject (default: 90)
 
-* *-enddist* (int) - Maximum distance between block tip and query tip in base pairs(bp) (default: 1000)
+* *-enddist* (int) - Maximum distance between block tip and query tip in base pairs(bp) (default: 50)
 
-* *-c* (int) - Element RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)
+* *-cpu* (int) - Number of threads to execute the blastn search (default: 10)
+
+* *-color* (int) - Element RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)
 
 ## 06/01/2022
 - adição dos campos “query file”, “database file” e “element length” no cabeçalho do “elements.txt” (arquivo que mostra as coordenadas e o tamanho dos elementos) para informar os parâmetros utilizados na busca
@@ -73,3 +75,12 @@ or
 - criação da pasta nome-de-pasta_2 quando a pasta informada no parâmetro out já existir
 - alteração do tamanho mínimo padrão (minlen) para 4000
 - adição do parâmetro tab, tabela com resultado da busca BLASTn
+
+## 15/01/2022
+- validação do parâmetro tab
+- alteração da distância máxima (enddist) padrão entre o bloco e a query para 50
+- adição e validação do parâmetro cpu, número de processadores para executar o blast 
+- alteração do parâmetro c para color ⇒ ambiguidade com o parâmetro cpu
+- alteração na validação dos parâmetros mincov e maxcov ⇒ entre 0 e 100 e diferentes entre si
+- alteração na validação dos parâmetros minlen e maxlen ⇒ maiores que 0 e diferentes entre si
+- adição do tempo de duração e parâmetros usados no cabeçalho do file.log e elements.txt

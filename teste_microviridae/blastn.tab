@@ -1,6 +1,6 @@
 # BLASTN 2.11.0+
 # Query: AGZN01000032_1
-# Database: patric/microviridae_Patric.fasta
+# Database: /usr/local/genome/databases/patric/microviridae_Patric.fasta
 # Fields: query id, subject id, % query coverage per subject, query length, subject length, q. start, q. end
 # 193 hits found
 AGZN01000032_1	AGZN01000032	100	12411	36075	1	12411
@@ -198,7 +198,7 @@ AGZN01000032_1	RAYI01000008	2	12411	143618	7573	7808
 AGZN01000032_1	JAAYUQ010000026	0	12411	26725	2859	2896
 # BLASTN 2.11.0+
 # Query: AQCH01000070_1
-# Database: patric/microviridae_Patric.fasta
+# Database: /usr/local/genome/databases/patric/microviridae_Patric.fasta
 # Fields: query id, subject id, % query coverage per subject, query length, subject length, q. start, q. end
 # 678 hits found
 AQCH01000070_1	LNXO01000003	100	21145	872857	1	21145
@@ -881,7 +881,7 @@ AQCH01000070_1	SLJW01000045	9	21145	18708	19	1997
 AQCH01000070_1	SKNA01000045	9	21145	4014	19	1997
 # BLASTN 2.11.0+
 # Query: ARBZ01000001_1
-# Database: patric/microviridae_Patric.fasta
+# Database: /usr/local/genome/databases/patric/microviridae_Patric.fasta
 # Fields: query id, subject id, % query coverage per subject, query length, subject length, q. start, q. end
 # 327 hits found
 ARBZ01000001_1	ARBZ01000001	100	19550	771404	1	19550
@@ -1213,7 +1213,7 @@ ARBZ01000001_1	RBJK01000364	0	19550	4335	18885	18940
 ARBZ01000001_1	JAGBVW010000012	0	19550	14455	14219	14264
 # BLASTN 2.11.0+
 # Query: ASYJ01000020_1
-# Database: patric/microviridae_Patric.fasta
+# Database: /usr/local/genome/databases/patric/microviridae_Patric.fasta
 # Fields: query id, subject id, % query coverage per subject, query length, subject length, q. start, q. end
 # 914 hits found
 ASYJ01000020_1	ASYJ01000020	100	19407	269561	1	19407

@@ -1,7 +1,14 @@
-Query file: teste.fasta
-Database file: patric/microviridae_Patric.fasta
-Element valid length: 4000-50000
-Valid % query coverage per subject: 30-90
+enddist: 50
+d: /usr/local/genome/databases/patric/microviridae_Patric.fasta
+minlen: 4000
+color: [255, 0, 0]
+o: /home/gpolavirus/Arthur/insertion_finder/teste_microviridae
+q: /home/gpolavirus/Arthur/insertion_finder/teste.fasta
+maxlen: 50000
+mincov: 30
+maxcov: 90
+cpu: 10
+
 query ID	subject ID	element identification	element 5' coordinate	element 3' coordinate	element length	valid
 ASYJ01000020_1	AHHG01000014	yes	7463	11920	4457	yes
 AQCH01000070_1	LNVY01000015	yes	7760	13543	5783	yes

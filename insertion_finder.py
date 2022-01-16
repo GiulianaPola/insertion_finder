@@ -3,6 +3,9 @@ import traceback
 import warnings
 import sys
 
+from datetime import datetime
+start_time = datetime.now()
+
 def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
 
     log = file if hasattr(file,'write') else sys.stderr
@@ -33,18 +36,20 @@ ajuda = ajuda + '-d <multifasta file>\tDatabase to BLAST against\n'
 ajuda = ajuda + '-tab <table file>\tBLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)\n'
 ajuda = ajuda + '\nOptional parameters:\n'
 ajuda = ajuda + "-o <path>\tOutput directory (default: output_dir1)\n"
-ajuda = ajuda + "-enddist <int>\tMaximum distance between block tip and query tip in base pairs(bp) (default: 1000)\n"
+ajuda = ajuda + "-enddist <int>\tMaximum distance between block tip and query tip in base pairs(bp) (default: 50)\n"
 ajuda = ajuda + "-minlen <int>\tMinimum element's length in base pairs(bp) (default: 5000)\n"
 ajuda = ajuda + "-maxlen <int>\tMaximum element's length in base pairs(bp) (default: 50000)\n"
 ajuda = ajuda + "-mincov <int>\tMinimum % query coverage per subject (default: 30)\n"
 ajuda = ajuda + "-maxcov <int>\tMaximum % query coverage per subject (default: 90)\n"
-ajuda = ajuda + "-c <int>\tElement RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)"
+ajuda = ajuda + "-cpu <int>\tNumber of threads to execute the blastn search (default: 10)\n"
+ajuda = ajuda + "-color <int>\tThe RGB color of the element that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)"
 
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-q')
 parser.add_argument('-d')
 parser.add_argument('-o')
-parser.add_argument('-c')
+parser.add_argument('-color')
+parser.add_argument('-cpu')
 parser.add_argument('-tab')
 parser.add_argument('-enddist')
 parser.add_argument('-minlen')
@@ -64,144 +69,243 @@ def validateargs(args):
   param=dict()
   
   if args.q==None:
-    print("Missing query file!")
+    print("Missing query file (-q)!")
     valid=False
   elif not args.q==None:
    if not os.path.isfile(args.q):
-     print("Query file not exist!")
+     print("Query file (-q) not exist!")
      valid=False
    else:
      if isfasta(args.q):
        param['q']=args.q
      else:
-       print("Invalid query file, invalid fasta formatting!")
+       print("Invalid query file (-q)!")
        valid=False
   
-  if args.tab==None and args.d==None:
-    print("Missing BLASTn table or database file!")
-    valid=False
-  elif not args.tab==None:
-    if not os.path.isfile(args.tab):
-      print("BLASTn table file not exist!")
-      valid=False
-    else:
-      qid,colunas,hits,d=opentable(args.tab)
-      if qid==[] or colunas==[]:
+  if valid==True:
+    if args.tab==None and args.d==None:
+      print("Missing BLASTn table (-tab) or database file (-d)!")
+    elif not args.tab==None:
+      if not os.path.isfile(args.tab):
+        print("BLASTn table file (-tab) not exist!")
         valid=False
       else:
-        for col in ['query id', 'subject id', '% query coverage per subject', 'query length', 'subject length', 'q. start', 'q. end']:
-          if not col in colunas:
-            valid=False
-            print("Column {} is not in table!".format(col))
-      if valid==True:
-        param['qid']=qid
-        param['colunas']=colunas
-        param['hits']=hits 
-        param['d']=d
-  elif not args.d==None:
-    if not os.path.isfile(args.d):
-      print("Database file not exist!")
-      valid=False
-    else:
-      if isfasta(args.d):
-        param['d']=args.d
-      else:
-        print("Invalid database file, invalid fasta formatting!")
-        valid=False
-  
-  if args.enddist==None:
-    param['enddist']=1000
-  else:
-    try:
-      param['enddist']=int(args.enddist)
-    except:
-      print("Maximum distance is not integer!")
-      valid=False
-  
-  if args.minlen==None:
-    param['minlen']=4000
-  else:
-    try:
-      param['minlen']=int(args.minlen)
-    except:
-      print("Minimum element's length is not integer!")
-      valid=False
-  
-  if args.mincov==None:
-    param['mincov']=30
-  else:
-    try:
-      param['mincov']=int(args.mincov)
-    except:
-      print("Minimum query coverage is not integer!")
-      valid=False
-  
-  if args.maxlen==None:
-    param['maxlen']=50000
-  else:
-    try:
-      param['maxlen']=int(args.maxlen)
-    except:
-      print("Maximum element's length is not integer!")
-      valid=False
-
-  if args.maxcov==None:
-    param['maxcov']=90
-  else:
-    try:
-      param['maxcov']=int(args.maxcov)
-    except:
-      print("Maximum query coverage is not integer!")
-      valid=False
-  
-  if args.c==None:
-    param['c']=[255,0,0]
-  else:
-      try:
-        if args.c.count(",")==2:
-          param['c']=[]
-          for num in args.c.split(","):
-            n=int(num)
-            if n>=0 and n<=255:
-              param['c'].append(int(num))
-            else:
-              print("Invalid element RGB color!\n")
-              valid=False
-        else:
-          print("Invalid element RGB color!\n")
+        qid,colunas,hits,d=opentable(args.tab)
+        if qid==[] or colunas==[]:
+          print("Invalid BLASTn table (-tab)!")
           valid=False
-      except:
-        print("Invalid element RGB color!\n")
+        else:
+          for col in ['query id', 'subject id', '% query coverage per subject', 'query length','q. start', 'q. end']:
+            if not col in colunas:
+              valid=False
+              print("Column {} is not in table (-tab) {}!".format(col,args.tab))
+        if valid==True:
+          param['qid']=qid
+          param['colunas']=colunas
+          param['hits']=hits 
+          param['d']=d
+    elif not args.d==None:
+      if not os.path.isfile(args.d):
+        print("Database file (-d) not exist!")
         valid=False
+      else:
+        if isfasta(args.d):
+          param['d']=args.d
+        else:
+          print("Invalid database file (-d), invalid formatting!")
+          valid=False
+  
+  if valid==True:
+    if args.enddist==None:
+      param['enddist']=50
+    else:
+      try:
+        int(args.enddist)
+      except:
+        print("The maximum distance (-enddist) is not integer!")
+        valid=False
+      else:
+        param['enddist']=int(args.enddist)
+  
+  if valid==True:
+    if args.cpu==None:
+      param['cpu']=10
+    else:
+      try:
+        int(args.cpu)
+      except:
+        print("Number of threads (-cpu) is not integer!")
+        valid=False
+      else:
+        if int(args.cpu)>=1:
+          param['cpu']=int(args.cpu)
+        else:
+          print("Number of threads (-cpu) must be greater than or equal to 1!")
+          valid=False
+          
+  
+  if valid==True:
+    if args.mincov==None and args.maxcov==None:
+      param['mincov']=30
+      param['maxcov']=90
+    elif not args.mincov==None and not args.maxcov==None:
+      try:
+        int(args.mincov)
+      except:
+        print("Minimum query coverage (-mincov) is not integer!")
+        valid=False
+      try:
+        int(args.maxcov)
+      except:
+        print("Maximum query coverage (-maxcov) is not integer!")
+        valid=False
+      if valid==True:
+        if int(args.mincov)>100 or int(args.mincov)<0:
+          print("Minimum query coverage (-mincov) must be between 0 and 100!")
+          valid=False
+        if int(args.maxcov)>100 or int(args.maxcov)<0:
+          print("Maximum query coverage (-maxcov) must be between 0 and 100!")
+          valid=False
+        if valid==True and int(args.mincov)<int(args.maxcov):
+          param['mincov']=args.mincov
+          param['maxcov']=args.maxcov
+        elif int(args.mincov)>int(args.maxcov):
+          param['maxcov']=args.mincov
+          param['mincov']=args.maxcov
+        elif int(args.mincov)==int(args.maxcov):
+          print("Minimum query coverage (-mincov) parameter must be smaller than the maximum query coverage (-maxcov)!")
+          valid=False
+    elif args.mincov==None and not args.maxcov==None:
+      try:
+        int(args.maxcov)
+      except:
+        print("Maximum query coverage (-maxcov) is not integer!")
+        valid=False
+      else:
+        if int(args.maxcov)<=100 and int(args.maxcov)>=0:
+          param['maxcov']=args.maxcov
+        else:
+          print("Maximum query coverage (-maxcov) must be between 0 and 100!")
+          valid=False
+    elif args.maxcov==None and not args.mincov==None:
+      try:
+        int(args.mincov)
+      except:
+        print("Minimum query coverage (-mincov) is not integer!")
+        valid=False
+      else:
+        if int(args.mincov)<=100 and int(args.mincov)>=0:
+          param['mincov']=args.mincov
+        else:
+          print("Minimum query coverage (-mincov) must be between 0 and 100!")
+          valid=False
+  
+  if valid==True:    
+    if args.minlen==None and args.maxlen==None:
+      param['minlen']=4000
+      param['maxlen']=50000
+    elif not args.minlen==None and not args.maxlen==None:
+      try:
+        int(args.minlen)
+      except:
+        print("Minimum element length (-minlen) is not integer!")
+        valid=False
+      try:
+        int(args.maxlen)
+      except:
+        print("Maximum element length (-maxlen) is not integer!")
+        valid=False
+      if valid==True:
+        if int(args.minlen)<0:
+          print("Minimum element length (-minlen) must be greater than or equal to 0!")
+          valid=False
+        if int(args.maxlen)<0:
+          print("Maximum element length (-maxlen) must be greater than or equal to 0!")
+          valid=False
+        if valid==True and int(args.minlen)<int(args.maxlen):
+          param['minlen']=args.minlen
+          param['maxlen']=args.maxlen
+        elif int(args.minlen)>int(args.maxlen):
+          param['maxlen']=args.minlen
+          param['minlen']=args.maxlen
+        elif int(args.minlen)==int(args.maxlen):
+          print("Minimum element length (-minlen) must be smaller than the maximum element length (-maxlen)!")
+          valid=False
+    elif args.minlen==None and not args.maxlen==None:
+      try:
+        int(args.maxlen)
+      except:
+        print("Maximum element length (-maxlen) is not integer!")
+        valid=False
+      else:
+        if int(args.maxlen)>=0:
+          param['maxlen']=args.maxlen
+        else:
+          print("Maximum element length (-maxlen) must be greater than or equal to 0!")
+          valid=False
+    elif args.maxlen==None and not args.minlen==None:
+      try:
+        int(args.minlen)
+      except:
+        print("Minimum element length (-minlen) is not integer!")
+        valid=False
+      else:
+        if int(args.minlen)>=0:
+          param['minlen']=args.minlen
+        else:
+          print("Minimum element length (-minlen) must be greater than or equal to 0!")
+          valid=False
+  
+  if valid==True:
+    if args.color==None:
+      param['color']=[255,0,0]
+    else:
+        try:
+          if args.color.count(",")==2:
+            param['color']=[]
+            for num in args.color.split(","):
+              n=int(num)
+              if n>=0 and n<=255:
+                param['color'].append(int(num))
+              else:
+                print("The RGB color of the element (-color) must be three integers between 0 and 255!")
+                valid=False
+                break
+          else:
+            print("The RGB color of the element (-color) must be three integers between 0 and 255!")
+            valid=False
+        except:
+          print("The RGB color of the element (-color) must be three integers between 0 and 255!")
+          valid=False
     
   if valid==True:
    if not args.o==None:
      if os.path.isdir(args.o):
-       print("Output directory {} exists!".format(args.o))
+       print("Output directory (-o) {} exists!".format(args.o))
        i=1
        out=args.o
        while os.path.isdir(out):
          i+=1
          out=args.o+"_"+str(i)
        os.mkdir(out)
-       print("Creating output directory {}...".format(out))
+       print("Creating output directory (-o) {}...".format(out))
        param['o']=out
      else:
        try:
          os.mkdir(args.o)
-         print("Creating output directory {}...".format(args.o))
+         print("Creating output directory (-o) {}...".format(args.o))
          param['o']=args.o
        except:
-         print("Output directory not valid\n")
+         print("Output directory (-o) not valid\n")
          valid=False
    else:
      i=1
-     out='output_dir1'
+     out='output_dir'
      while os.path.isdir(out):
        i+=1
        out='output_dir'+str(i)
      os.mkdir(out)
-     print("Creating output directory {}...".format(out))
+     print("Creating output directory (-o) {}...".format(out))
      param['o']=out
     
   return valid,param
@@ -307,7 +411,7 @@ elif args.help == False:
       if args.tab ==None:
         comando_blastn = NcbiblastnCommandline( \
         query=param['q'], db=param['d'], \
-        outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param['o'], "blastn.tab"),num_threads=10)
+        outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param['o'], "blastn.tab"),num_threads=param['cpu'])
         stdout, stderr = comando_blastn()
         tab=os.path.join(param['o'], "blastn.tab")
         qid,colunas,hits,d=opentable(tab)
@@ -321,18 +425,16 @@ elif args.help == False:
       cont=0
       econt=0
       tabular=open(os.path.join(param['o'], 'elements.txt'),'w')
-      tabular.write("Query file: {}\n".format(param['q']))
-      log.append(("Query file: {}".format(param['q'])))
-      tabular.write("Database file: {}\n".format(param['d']))
-      log.append("Database file: {}".format(param['d']))
-      tabular.write("Element valid length: {0}-{1}\n".format(param['minlen'],param['maxlen']))
-      log.append("Element valid length: {0}-{1}".format(param['minlen'],param['maxlen']))
-      tabular.write("Valid % query coverage per subject: {0}-{1}\n".format(param['mincov'],param['maxcov']))
-      log.append("Valid % query coverage per subject: {0}-{1}".format(param['mincov'],param['maxcov']))
-      tabular.write("query ID\tsubject ID\telement identification\telement 5' coordinate\telement 3' coordinate\telement length\tvalid\n")
-      df=pd.DataFrame(columns=param['colunas'],data=param['hits'])
+      hits=param.pop('hits')
+      colunas=param.pop('colunas')
+      qids=param.pop('qid')
+      for p in param.keys():
+        tabular.write("{}: {}\n".format(p,param[p]))
+        log.append("{}: {}".format(p,param[p]))
+      tabular.write("\nquery ID\tsubject ID\telement identification\telement 5' coordinate\telement 3' coordinate\telement length\tvalid\n")
+      df=pd.DataFrame(columns=colunas,data=hits)
       df=df.apply(pd.to_numeric, errors='ignore').drop_duplicates()
-      for qid in param['qid']:
+      for qid in qids:
         df1=df.loc[df['query id'] == qid]
         log.append("\nQuery id\t{}".format(qid))
         log.append("{} hits!".format(len(df1)))
@@ -343,7 +445,7 @@ elif args.help == False:
         if len(df1)>0:
           qlen=df1['query length'].tolist()[0]
           log.append("Query length\t{}".format(qlen))
-          df1=df1.groupby('subject id').agg({'subject length':'mean','% query coverage per subject':'mean'}).reset_index()
+          df1=df1.groupby('subject id').agg({'% query coverage per subject':'mean'}).reset_index()
           df1=df1.loc[(df1['% query coverage per subject'] >= param['mincov']) & (df1['% query coverage per subject'] <= param['maxcov'])]
           df1=df1.sort_values(by=['% query coverage per subject'],ascending=False)
           if len(df1)==0:
@@ -378,7 +480,7 @@ elif args.help == False:
                     ft=open(os.path.join(param['o'], qid, str(qid+'_element.gb')),'w')
                     ft.write("     misc_feature    {0}..{1}\n".format(estart,eend))
                     ft.write("                     /label=element\n")
-                    ft.write("                     /color={} {} {}\n".format(param['c'][0],param['c'][1],param['c'][2]))
+                    ft.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
                     ft.close()
                   except:
                     log.append("Element's feature table was't writen!")
@@ -414,7 +516,7 @@ elif args.help == False:
                   ft=open(os.path.join(param['o'], qid, str(qid+'_element.gb')),'w')
                   ft.write("     misc_feature    {0}..{1}\n".format(estart,eend))
                   ft.write("                     /label=element\n")
-                  ft.write("                     /color={} {} {}\n".format(param['c'][0],param['c'][1],param['c'][2]))
+                  ft.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
                   ft.close()
                 except:
                   log.append("Element's feature table was't writen!")
@@ -429,7 +531,11 @@ elif args.help == False:
               else:
                 log.append("Invalid element!")
                 tabular.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n".format(qid,sid,element,estart,eend,elen,'no'))
-      log.append('\nProcessed {} queries with {} valid elements'.format(len(param['qid']),econt))
+      log.append('\nProcessed {} queries with {} valid elements'.format(len(qids),econt))
+      print('\nProcessed {} queries with {} valid elements'.format(len(qids),econt))
+      end_time = datetime.now()
+      print('Duration: {}'.format(end_time - start_time))
+      log.append('Duration: {}'.format(end_time - start_time))
       tabular.close()
       erros=open(os.path.join(param['o'], 'file.log'),'w')
       erros.write('\n'.join(str(v) for v in log))
