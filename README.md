@@ -84,3 +84,6 @@ or
 - alteração na validação dos parâmetros mincov e maxcov ⇒ entre 0 e 100 e diferentes entre si
 - alteração na validação dos parâmetros minlen e maxlen ⇒ maiores que 0 e diferentes entre si
 - adição do tempo de duração e parâmetros usados no cabeçalho do file.log e elements.txt
+
+## 21/01/2022
+- correção do erro "IndexError: list index out of range"

@@ -1,66 +1,58 @@
-enddist: 50
-d: /usr/local/genome/databases/patric/microviridae_Patric.fasta
-minlen: 4000
-color: [255, 0, 0]
-o: /home/gpolavirus/Arthur/insertion_finder/teste_microviridae
-q: /home/gpolavirus/Arthur/insertion_finder/teste.fasta
-maxlen: 50000
-mincov: 30
-maxcov: 90
-cpu: 10
+Query file: /home/oocyst/insertion_finder/fasta/teste.fasta
+Database file: /usr/local/genome/databases/patric/microviridae_Patric.fasta
+Element length: 4000-50000
+Query coverage: 30-90
+Maximum block distance: 50
+Number of threads: 10
+Element color: [255, 0, 0]
 
-Query id	ASYJ01000020_1
+Query id: ASYJ01000020_1
 904 hits!
-Query length	19407
-subject id                      FTRB01000003
-% query coverage per subject              77
-Alignments	[[1, 7462], [11921, 12114], [12075, 18952], [18941, 19407]]
-Query has element!
-Element coodinates	7463 - 11920
-Element length	4457
+Query length: 19407
+Subject id: CP023403
+% query coverage per subject: 77
+Alignments: [[1, 7462], [11918, 12114], [12075, 18952], [18941, 19407]]
+Element coodinates: 7463 - 11917
+Element length: 4454
 Valid element!
 Writing element's feature table...
 Writing element's fasta...
 
-Query id	AQCH01000070_1
+Query id: AQCH01000070_1
 678 hits!
-Query length	21145
-subject id                      LNWY01000014
-% query coverage per subject              73
-Alignments	[[1, 7759], [13544, 21145]]
-Query has element!
-Element coodinates	7760 - 13543
-Element length	5783
+Query length: 21145
+Subject id: LNWE01000003
+% query coverage per subject: 73
+Alignments: [[1, 7751], [13536, 21145]]
+Element coodinates: 7752 - 13535
+Element length: 5783
 Valid element!
 Writing element's feature table...
 Writing element's fasta...
 
-Query id	AGZN01000032_1
+Query id: AGZN01000032_1
 193 hits!
-Query length	12411
-subject id                      QSJN01000002
-% query coverage per subject              63
-Alignments	[[1, 7808]]
-One block alignment!
-Query has element!
-Element coodinates	7809 - 12411
-Element length	4602
+Query length: 12411
+Subject id: ACUA01000003
+% query coverage per subject: 63
+Alignments: [[1, 7808]]
+Element coodinates: 7809 - 12411
+Element length: 4602
 Valid element!
 Writing element's feature table...
 Writing element's fasta...
 
-Query id	ARBZ01000001_1
+Query id: ARBZ01000001_1
 327 hits!
-Query length	19550
-subject id                      NZ_GG740056
-% query coverage per subject             43
-Alignments	[[1, 1058], [11852, 19245]]
-Query has element!
-Element coodinates	1059 - 11851
-Element length	10792
+Query length: 19550
+Subject id: CP003667
+% query coverage per subject: 43
+Alignments: [[1, 1058], [11852, 19245]]
+Element coodinates: 1059 - 11851
+Element length: 10792
 Valid element!
 Writing element's feature table...
 Writing element's fasta...
 
 Processed 4 queries with 4 valid elements
-Duration: 0:21:30.689808
+Duration: 0:15:08.590148

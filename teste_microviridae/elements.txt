@@ -1,16 +1,16 @@
-enddist: 50
-d: /usr/local/genome/databases/patric/microviridae_Patric.fasta
-minlen: 4000
-color: [255, 0, 0]
-o: /home/gpolavirus/Arthur/insertion_finder/teste_microviridae
-q: /home/gpolavirus/Arthur/insertion_finder/teste.fasta
-maxlen: 50000
-mincov: 30
-maxcov: 90
-cpu: 10
+Query file: /home/oocyst/insertion_finder/fasta/teste.fasta
+Database file: /usr/local/genome/databases/patric/microviridae_Patric.fasta
+Element length: 4000-50000
+Query coverage: 30-90
+Maximum block distance: 50
+Number of threads: 10
+Element color: [255, 0, 0]
 
-query ID	subject ID	element identification	element 5' coordinate	element 3' coordinate	element length	valid
-ASYJ01000020_1	AHHG01000014	yes	7463	11920	4457	yes
-AQCH01000070_1	LNVY01000015	yes	7760	13543	5783	yes
+Query ID	Subject ID	Element identification	Element 5' coordinate	Element 3' coordinate	Element length	Valid
+ASYJ01000020_1	CP023403	yes	7463	11917	4454	yes
+AQCH01000070_1	LNWE01000003	yes	7752	13535	5783	yes
 AGZN01000032_1	ACUA01000003	yes	7809	12411	4602	yes
 ARBZ01000001_1	CP003667	yes	1059	11851	10792	yes
+
+Processed 4 queries with 4 valid elements
+Duration: 0:15:08.590148
