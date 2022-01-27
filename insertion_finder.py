@@ -35,6 +35,7 @@ ajuda = ajuda + '\nMandatory parameters:\n'
 ajuda = ajuda + '-q <fasta or multifasta file>\tSequence to search with\n'
 ajuda = ajuda + '-d <multifasta file>\tDatabase to BLAST against\n'
 ajuda = ajuda + '-tab <table file>\tBLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)\n'
+ajuda = ajuda + '-run <local|web>\tchoice of running local or web BLAST search\n'
 ajuda = ajuda + '\nOptional parameters:\n'
 ajuda = ajuda + "-o <path>\tOutput directory (default: output_dir1)\n"
 ajuda = ajuda + "-enddist <int>\tMaximum distance between block tip and query tip in base pairs(bp) (default: 50)\n"
@@ -57,6 +58,7 @@ parser.add_argument('-minlen')
 parser.add_argument('-maxlen')
 parser.add_argument('-mincov')
 parser.add_argument('-maxcov')
+parser.add_argument('-run')
 parser.add_argument('-h', '--help', action='store_true')
 args = parser.parse_args()
 
@@ -84,38 +86,58 @@ def validateargs(args):
        valid=False
   
   if valid==True:
-    if args.tab==None and args.d==None:
-      print("Missing BLASTn table (-tab) or database file (-d)!")
-    elif not args.tab==None:
-      if not os.path.isfile(args.tab):
-        print("BLASTn table file (-tab) not exist!")
+    if args.run==None:
+      print("Missing the choice (-run) of BLAST search: 'local' or 'web'!")
+      valid=False
+    else:
+      try:
+        args.run.lower
+      except:
+        print("BLASTn run choice (-run) must be string: 'local' or 'web'!")
         valid=False
       else:
-        qid,colunas,hits,d=opentable(args.tab)
-        if qid==[] or colunas==[]:
-          print("Invalid BLASTn table (-tab)!")
+        if args.run.lower()=='web':
+          param['run']='web'
+        elif args.run.lower()=='local':
+          param['run']='local'
+        else:
+          print("Invalid BLASTn run choice (-run), must be 'local' or 'web'!")
+          valid=False
+  
+  if valid==True:
+    if param['run']=='local':
+      if args.tab==None and args.d==None:
+        print("Missing BLASTn table (-tab) or database file (-d)!")
+      elif not args.tab==None:
+        if not os.path.isfile(args.tab):
+          print("BLASTn table file (-tab) not exist!")
           valid=False
         else:
-          for col in ['query id', 'subject id', '% query coverage per subject', 'query length','q. start', 'q. end']:
-            if not col in colunas:
-              valid=False
-              print("Column {} is not in table (-tab) {}!".format(col,args.tab))
-        if valid==True:
-          param['qid']=qid
-          param['colunas']=colunas
-          param['hits']=hits 
-          param['d']=d
-          param['tab']=args.tab
-    elif not args.d==None:
-      if not os.path.isfile(args.d):
-        print("Database file (-d) not exist!")
-        valid=False
-      else:
-        if isfasta(args.d):
-          param['d']=args.d
-        else:
-          print("Invalid database file (-d), invalid formatting!")
+          qid,colunas,hits,d=opentable(args.tab)
+          if qid==[] or colunas==[]:
+            print("Invalid BLASTn table (-tab)!")
+            valid=False
+          else:
+            for col in ['query id', 'subject id', '% query coverage per subject', 'query length','q. start', 'q. end']:
+              if not col in colunas:
+                valid=False
+                print("Column {} is not in table (-tab) {}!".format(col,args.tab))
+          if valid==True:
+            param['qid']=qid
+            param['colunas']=colunas
+            param['hits']=hits 
+            param['d']=d
+            param['tab']=args.tab
+      elif not args.d==None:
+        if not os.path.isfile(args.d):
+          print("Database file (-d) not exist!")
           valid=False
+        else:
+          if isfasta(args.d):
+            param['d']=args.d
+          else:
+            print("Invalid database file (-d), invalid formatting!")
+            valid=False
   
   if valid==True:
     if args.enddist==None:
@@ -413,9 +435,10 @@ elif args.help == False:
     qseqs=open(param['q'], "r").read()
     try:
       if args.tab ==None:
-        comando_blastn = NcbiblastnCommandline( \
-        query=param['q'], db=param['d'], \
-        outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param['o'], "blastn.tab"),num_threads=param['cpu'])
+        if param['run']=='local':
+          comando_blastn = NcbiblastnCommandline(query=param['q'], db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param['o'], "blastn.tab"),num_threads=param['cpu'])
+        elif param['run']=='web':
+          comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param['o'], "blastn.tab"),remote=True)
         stdout, stderr = comando_blastn()
         tab=os.path.join(param['o'], "blastn.tab")
         qid,colunas,hits,d=opentable(tab)

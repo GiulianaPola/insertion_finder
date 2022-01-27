@@ -12,6 +12,7 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 * *-d* (multifasta file) - Database to BLAST against
 or
 * *-tab* (table file) - BLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)
+* *-run* (local|web) - Choice of running local or web BLAST search
 
 **Optional parameters:**
   
@@ -87,3 +88,7 @@ or
 
 ## 21/01/2022
 - correção do erro "IndexError: list index out of range"
+
+## 26/01/2022
+- adição do parâmetro run com as opções local ou web
+- erro: escolha de subject duas vezes (query ARBZ01000001_1 versão web)

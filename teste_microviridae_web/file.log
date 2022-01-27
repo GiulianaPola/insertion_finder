@@ -1,0 +1,61 @@
+Query file: /home/oocyst/insertion_finder/fasta/teste.fasta
+Element length: 4000-50000
+Query coverage: 30-90
+Maximum block distance: 50
+Number of threads: 10
+Element color: [255, 0, 0]
+
+Query id: ASYJ01000020_1
+604 hits!
+Query length: 19407
+Subject id: gi|1243387638|gb|CP023404.1|
+% query coverage per subject: 77
+Alignments: [[1, 7462], [11918, 12114], [12075, 18952], [18941, 19407]]
+Element coodinates: 7463 - 11917
+Element length: 4454
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id: ARBZ01000001_1
+58 hits!
+Query length: 19550
+Subject id: gi|2057894373|tpg|BK051052.1|
+% query coverage per subject: 82
+Alignments: [[1, 16164]]
+Element coodinates: 16165 - 19550
+Element length: 3385Subject id: gi|2054397931|tpg|BK031156.1|
+% query coverage per subject: 61
+Alignments: [[993, 5642], [5763, 6024], [9384, 16575], [16046, 16127]]
+Element coodinates: 6025 - 9383
+Element length: 3358
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id: AQCH01000070_1
+625 hits!
+Query length: 21145
+Subject id: gi|99036121|gb|CP000377.1|
+% query coverage per subject: 72
+Alignments: [[1, 7679], [13596, 21145]]
+Element coodinates: 7680 - 13595
+Element length: 5915
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id: AGZN01000032_1
+44 hits!
+Query length: 12411
+Subject id: gi|2032372039|gb|CP042285.1|
+% query coverage per subject: 62
+Alignments: [[1, 7808]]
+Element coodinates: 7809 - 12411
+Element length: 4602
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Processed 4 queries with 4 valid elements
+Duration: 0:32:59.828049
