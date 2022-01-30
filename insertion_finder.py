@@ -87,28 +87,10 @@ def validateargs(args):
   
   if valid==True:
     if args.run==None:
-      print("Missing the choice (-run) of BLAST search: 'local' or 'web'!")
-      valid=False
-    else:
-      try:
-        args.run.lower
-      except:
-        print("BLASTn run choice (-run) must be string: 'local' or 'web'!")
+      if args.tab==None:
+        print("Missing BLASTn table file (-tab)!")
         valid=False
       else:
-        if args.run.lower()=='web':
-          param['run']='web'
-        elif args.run.lower()=='local':
-          param['run']='local'
-        else:
-          print("Invalid BLASTn run choice (-run), must be 'local' or 'web'!")
-          valid=False
-  
-  if valid==True:
-    if param['run']=='local':
-      if args.tab==None and args.d==None:
-        print("Missing BLASTn table (-tab) or database file (-d)!")
-      elif not args.tab==None:
         if not os.path.isfile(args.tab):
           print("BLASTn table file (-tab) not exist!")
           valid=False
@@ -128,7 +110,11 @@ def validateargs(args):
             param['hits']=hits 
             param['d']=d
             param['tab']=args.tab
-      elif not args.d==None:
+    elif args.run.lower()=='local':
+      if args.d==None:
+        print("Missing database file (-d)!")
+        valid=False
+      else:
         if not os.path.isfile(args.d):
           print("Database file (-d) not exist!")
           valid=False
@@ -139,6 +125,28 @@ def validateargs(args):
             print("Invalid database file (-d), invalid formatting!")
             valid=False
   
+  if valid==True:
+    if args.tab==None:
+      if args.run==None:
+        print("Missing the choice (-run) of BLAST search: 'local' or 'web'!")
+        valid=False
+      else:
+        try:
+          args.run.lower()
+        except:
+          print("BLASTn run choice (-run) must be string: 'local' or 'web'!")
+          valid=False
+        else:
+          if args.run.lower()=='web':
+            param['run']='web'
+          elif args.run.lower()=='local':
+            param['run']='local'
+          else:
+            print("Invalid BLASTn run choice (-run), must be 'local' or 'web'!")
+            valid=False
+  
+
+
   if valid==True:
     if args.enddist==None:
       param['enddist']=50
@@ -508,6 +516,7 @@ elif args.help == False:
                 #print(estart,eend,elen)
                 if estart>0:
                   log.write('\n'.join(str(v) for v in hit))
+                  i=-1                  
                   element='yes'
                   log.write("\nElement coodinates: {} - {}".format(estart,eend))
                   log.write("\nElement length: {}".format(elen))
@@ -535,7 +544,6 @@ elif args.help == False:
                       log.write("\nElement's fasta was't writen!")
                     else:
                       log.write("\nWriting element's fasta...")
-                    i=-1
                 elif estart==0:
                   log.write('\n'.join(str(v) for v in hit))
                   log.write("\nInvalid element!")
@@ -554,7 +562,8 @@ elif args.help == False:
                 log.write('\n'.join(str(v) for v in hit))
                 log.write("\nElement coodinates: {} - {}".format(estart,eend))
                 log.write("\nElement length: {}".format(elen))
-                if elen<=param['maxlen']:
+                i=-1
+                if elen>=param['minlen'] and elen<=param['maxlen']:
                   log.write("\nValid element!")
                   econt+=1
                   os.mkdir(os.path.join(param['o'], qid))
@@ -576,11 +585,9 @@ elif args.help == False:
                     fasta.close()
                   except:
                     log.write("\nElement's fasta was't writen!")
-                  i=-1
                 else:
                   log.write("\nInvalid element!")
                   tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,element,estart,eend,elen,'no'))
-                  i=-1
             if i==nsid and not i==-1:
               i=-1
               element='no'

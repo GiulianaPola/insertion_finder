@@ -92,3 +92,6 @@ or
 ## 26/01/2022
 - adição do parâmetro run com as opções local ou web
 - erro: escolha de subject duas vezes (query ARBZ01000001_1 versão web)
+
+## 29/01/2022
+- erro corrigido (query ARBZ01000001_1 versão web)
