@@ -16,7 +16,7 @@ warnings.showwarning = warn_with_traceback
 
 #python insertion_finder.py -query "NZ_EQ973357.fasta" -db "db/genomas.fasta"
 #python insertion_finder.py -query "PVBG01000001_1.fasta" -db "patric/Rhodo_Rhizo.fasta"
-#python insertion_finder.py -q "elements.fasta" -d "patric/Rhodo_Rhizo.fasta" -o "teste_Rhodobacterales"
+#python insertion_finder.py -q "elements.fasta" -d "patric/Rhodo_Rhizo.fasta" -out "teste_Rhodobacterales"
 
 import argparse
 import pandas as pd
@@ -29,15 +29,17 @@ elements=[]
 
 ajuda = 'insertion_finder - element insertion finder in a genome through a BLAST search\n'
 ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
-ajuda = ajuda + 'Usage: insertion_finder.py -q <query file> -d <database file>\n'
+ajuda = ajuda + 'Usage: insertion_finder.py -q <query file> -d <database file> -run local\n'
 ajuda = ajuda + '\tinsertion_finder.py -q <query file> -tab <BLASTn table file>\n'
+ajuda = ajuda + '\tinsertion_finder.py -q <query file> -run web\n'
 ajuda = ajuda + '\nMandatory parameters:\n'
 ajuda = ajuda + '-q <fasta or multifasta file>\tSequence to search with\n'
 ajuda = ajuda + '-d <multifasta file>\tDatabase to BLAST against\n'
 ajuda = ajuda + '-tab <table file>\tBLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)\n'
 ajuda = ajuda + '-run <local|web>\tchoice of running local or web BLAST search\n'
 ajuda = ajuda + '\nOptional parameters:\n'
-ajuda = ajuda + "-o <path>\tOutput directory (default: output_dir1)\n"
+ajuda = ajuda + '-org <int>\tTaxid(s) to restrict the database of the BLASTn search\n'
+ajuda = ajuda + "-out <path>\tOutput directory (default: output_dir1)\n"
 ajuda = ajuda + "-enddist <int>\tMaximum distance between block tip and query tip in base pairs(bp) (default: 50)\n"
 ajuda = ajuda + "-minlen <int>\tMinimum element's length in base pairs(bp) (default: 5000)\n"
 ajuda = ajuda + "-maxlen <int>\tMaximum element's length in base pairs(bp) (default: 50000)\n"
@@ -49,7 +51,8 @@ ajuda = ajuda + "-color <int>\tThe RGB color of the element that is shown by the
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-q')
 parser.add_argument('-d')
-parser.add_argument('-o')
+parser.add_argument('-out')
+parser.add_argument('-org')
 parser.add_argument('-color')
 parser.add_argument('-cpu')
 parser.add_argument('-tab')
@@ -144,8 +147,19 @@ def validateargs(args):
           else:
             print("Invalid BLASTn run choice (-run), must be 'local' or 'web'!")
             valid=False
-  
 
+  if valid==True:
+    if not args.org==None:
+      try:
+        taxids=[]
+        for id in args.org.split(','):
+          int(id)
+          taxids.append("txid{}[ORGN]".format(id))
+      except:
+        print("Taxid(s) must be integers separated by commas!")
+        valid=False
+      else:
+        param['org']=' OR '.join(taxids)
 
   if valid==True:
     if args.enddist==None:
@@ -311,24 +325,24 @@ def validateargs(args):
           valid=False
     
   if valid==True:
-   if not args.o==None:
-     if os.path.isdir(args.o):
-       print("Output directory (-o) {} exists!".format(args.o))
+   if not args.out==None:
+     if os.path.isdir(args.out):
+       print("Output directory (-out) {} exists!".format(args.out))
        i=1
-       out=args.o
+       out=args.out
        while os.path.isdir(out):
          i+=1
-         out=args.o+"_"+str(i)
+         out=args.out+"_"+str(i)
        os.mkdir(out)
-       print("Creating output directory (-o) {}...".format(out))
-       param['o']=out
+       print("Creating output directory (-out) {}...".format(out))
+       param["out"]=out
      else:
        try:
-         os.mkdir(args.o)
-         print("Creating output directory (-o) {}...".format(args.o))
-         param['o']=args.o
+         os.mkdir(args.out)
+         print("Creating output directory (-out) {}...".format(args.out))
+         param["out"]=args.out
        except:
-         print("Output directory (-o) not valid\n")
+         print("Output directory (-out) not valid\n")
          valid=False
    else:
      i=1
@@ -337,8 +351,8 @@ def validateargs(args):
        i+=1
        out='output_dir'+str(i)
      os.mkdir(out)
-     print("Creating output directory (-o) {}...".format(out))
-     param['o']=out
+     print("Creating output directory (-out) {}...".format(out))
+     param["out"]=out
     
   return valid,param
 
@@ -444,11 +458,15 @@ elif args.help == False:
     try:
       if args.tab ==None:
         if param['run']=='local':
-          comando_blastn = NcbiblastnCommandline(query=param['q'], db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param['o'], "blastn.tab"),num_threads=param['cpu'])
+          comando_blastn = NcbiblastnCommandline(query=param['q'], db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),num_threads=param['cpu'])
         elif param['run']=='web':
-          comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param['o'], "blastn.tab"),remote=True)
+          if not 'org' in param:
+            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True)
+          else:
+            #print(param['org'])
+            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True,entrez_query=param['org'])
         stdout, stderr = comando_blastn()
-        tab=os.path.join(param['o'], "blastn.tab")
+        tab=os.path.join(param["out"], "blastn.tab")
         qid,colunas,hits,d=opentable(tab)
         param['qid']=qid
         param['colunas']=colunas
@@ -459,8 +477,8 @@ elif args.help == False:
     else:
       cont=0
       econt=0
-      tabular=open(os.path.join(param['o'], 'elements.txt'),'w')
-      log=open(os.path.join(param['o'], 'file.log'),'w')
+      tabular=open(os.path.join(param["out"], 'elements.txt'),'w')
+      log=open(os.path.join(param["out"], 'file.log'),'w')
       hits=param.pop('hits')
       colunas=param.pop('colunas')
       qids=param.pop('qid')
@@ -472,6 +490,12 @@ elif args.help == False:
       if 'd' in param:
         tabular.write("\nDatabase file: {}".format(param["d"]))
         log.write("\nDatabase file: {}".format(param["d"]))
+      else:
+        tabular.write("\nDatabase file: nt")
+        log.write("\nDatabase file: nt")
+      if 'org' in param:
+        tabular.write("\nTaxids: {}".format(args.org))
+        log.write("\nTaxids: {}".format(args.org))
       tabular.write("\nElement length: {}-{}".format(param["minlen"],param["maxlen"]))
       log.write("\nElement length: {}-{}".format(param["minlen"],param["maxlen"]))
       tabular.write("\nQuery coverage: {}-{}".format(param["mincov"],param["maxcov"]))
@@ -523,10 +547,10 @@ elif args.help == False:
                   if elen>=param['minlen'] and elen<=param['maxlen']:
                     log.write("\nValid element!")
                     econt+=1
-                    os.mkdir(os.path.join(param['o'], qid))
+                    os.mkdir(os.path.join(param["out"], qid))
                     tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,element,estart,eend,elen,'yes'))
                     try:
-                      ft=open(os.path.join(param['o'], qid, str(qid+'_element.gb')),'w')
+                      ft=open(os.path.join(param["out"], qid, str(qid+'_element.gb')),'w')
                       ft.write("     misc_feature    {0}..{1}\n".format(estart,eend))
                       ft.write("                     /label=element\n")
                       ft.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
@@ -536,7 +560,7 @@ elif args.help == False:
                     else:
                       log.write("\nWriting element's feature table...")
                     try:
-                      fasta=open(os.path.join(param['o'], qid, str(qid+'_element.fasta')),'w')
+                      fasta=open(os.path.join(param["out"], qid, str(qid+'_element.fasta')),'w')
                       fasta.write(">{0} - element - {1}-{2}\n".format(qid,estart,eend))
                       fasta.write(extract(qseqs, qid, estart, eend))
                       fasta.close()
@@ -566,11 +590,11 @@ elif args.help == False:
                 if elen>=param['minlen'] and elen<=param['maxlen']:
                   log.write("\nValid element!")
                   econt+=1
-                  os.mkdir(os.path.join(param['o'], qid))
+                  os.mkdir(os.path.join(param["out"], qid))
                   tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,element,estart,eend,elen,'yes'))
                   try:
                     log.write("\nWriting element's feature table...")
-                    ft=open(os.path.join(param['o'], qid, str(qid+'_element.gb')),'w')
+                    ft=open(os.path.join(param["out"], qid, str(qid+'_element.gb')),'w')
                     ft.write("     misc_feature    {0}..{1}\n".format(estart,eend))
                     ft.write("                     /label=element\n")
                     ft.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
@@ -579,7 +603,7 @@ elif args.help == False:
                     log.write("\nElement's feature table was't writen!")
                   try:
                     log.write("\nWriting element's fasta...")
-                    fasta=open(os.path.join(param['o'], qid, str(qid+'_element.fasta')),'w')
+                    fasta=open(os.path.join(param["out"], qid, str(qid+'_element.fasta')),'w')
                     fasta.write(">{0} - element - {1}-{2}\n".format(qid,estart,eend))
                     fasta.write(extract(qseqs, qid, estart, eend))
                     fasta.close()

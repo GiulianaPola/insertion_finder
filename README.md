@@ -1,22 +1,25 @@
 # insertion_finder - element insertion finder in a genome through a BLAST search
 (c) 2021. Arthur Gruber & Giuliana Pola
 
-Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST against
+Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST against *-run* 'local'
 
 *insertion_finder.py -q* query file *-tab* BLASTn table file
+
+*insertion_finder.py -q* query file *-run* 'web'
 
 **Mandatory parameters:**
 
 * *-q* (fasta or multifasta file) - Sequence to search with
 
 * *-d* (multifasta file) - Database to BLAST against
-or
+
 * *-tab* (table file) - BLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)
 * *-run* (local|web) - Choice of running local or web BLAST search
 
 **Optional parameters:**
-  
-* *-o* (path) - Output directory
+* *-org* (int) - Taxid(s) to restrict the database of the BLASTn search
+
+* *-out* (path) - Output directory
   
 * *-minlen* (int) - Minimum element's length in base pairs(bp) (default: 5000)
 
@@ -95,3 +98,7 @@ or
 
 ## 29/01/2022
 - erro corrigido (query ARBZ01000001_1 versão web)
+
+## 30/01/2022
+- mudança do parâmetro o to out
+- adição e validação do parâmetro org, taxid para restringir o database da busca BLASTn
