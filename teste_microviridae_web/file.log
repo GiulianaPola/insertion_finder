@@ -1,10 +1,9 @@
 Query file: /home/oocyst/insertion_finder/fasta/teste.fasta
 Database file: nt
-Taxids: 2
+Taxids: 2,2157
 Element length: 4000-50000
 Query coverage: 30-90
 Maximum block distance: 50
-Number of threads: 10
 Element color: [255, 0, 0]
 
 Query id: ASYJ01000020_1
@@ -56,4 +55,4 @@ Writing element's feature table...
 Writing element's fasta...
 
 Processed 4 queries with 4 valid elements
-Duration: 0:36:16.387726
+Duration: 0:43:08.530218

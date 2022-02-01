@@ -1,6 +1,6 @@
 # BLASTN 2.11.0+
 # Query: AGZN01000032_1
-# RID: ZEM97KK7016
+# RID: ZHA90RP0013
 # Database: nt
 # Fields: query id, subject id, % query coverage per subject, query length, subject length, q. start, q. end
 # 15 hits found
@@ -21,7 +21,7 @@ AGZN01000032_1	gi|1986004062|gb|CP069431.1|	14	12411	4812038	5931	7721
 AGZN01000032_1	gi|149935098|gb|CP000140.1|	14	12411	4811379	5931	7721
 # BLASTN 2.11.0+
 # Query: AQCH01000070_1
-# RID: ZEMKRB6T016
+# RID: ZHAPVR90013
 # Database: nt
 # Fields: query id, subject id, % query coverage per subject, query length, subject length, q. start, q. end
 # 626 hits found
@@ -653,7 +653,7 @@ AQCH01000070_1	gi|1958275331|gb|CP068224.1|	0	21145	6293057	3804	3917
 AQCH01000070_1	gi|1958240142|gb|CP068223.1|	0	21145	6551860	3816	3917
 # BLASTN 2.11.0+
 # Query: ARBZ01000001_1
-# RID: ZEN6CM40016
+# RID: ZHB9JC97013
 # Database: nt
 # Fields: query id, subject id, % query coverage per subject, query length, subject length, q. start, q. end
 # 33 hits found
@@ -692,7 +692,7 @@ ARBZ01000001_1	gi|1929911993|gb|CP064059.1|	0	19550	2508018	558	616
 ARBZ01000001_1	gi|1929909778|gb|CP064058.1|	0	19550	2508082	558	616
 # BLASTN 2.11.0+
 # Query: ASYJ01000020_1
-# RID: ZENM8NXY013
+# RID: ZHC1CMEB013
 # Database: nt
 # Fields: query id, subject id, % query coverage per subject, query length, subject length, q. start, q. end
 # 595 hits found

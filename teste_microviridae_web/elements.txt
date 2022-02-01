@@ -1,10 +1,9 @@
 Query file: /home/oocyst/insertion_finder/fasta/teste.fasta
 Database file: nt
-Taxids: 2
+Taxids: 2,2157
 Element length: 4000-50000
 Query coverage: 30-90
 Maximum block distance: 50
-Number of threads: 10
 Element color: [255, 0, 0]
 
 Query ID	Subject ID	Element identification	Element 5' coordinate	Element 3' coordinate	Element length	Valid
@@ -14,4 +13,4 @@ AQCH01000070_1	gi|1533595444|emb|LR027553.1|	yes	7752	13535	5783	yes
 AGZN01000032_1	gi|1576727513|emb|LR215978.1|	yes	7809	12411	4602	yes
 
 Processed 4 queries with 4 valid elements
-Duration: 0:36:16.387726
+Duration: 0:43:08.530218

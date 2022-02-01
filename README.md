@@ -102,3 +102,7 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 ## 30/01/2022
 - mudança do parâmetro o to out
 - adição e validação do parâmetro org, taxid para restringir o database da busca BLASTn
+
+## 31/01/2022
+- number of threads só aparece no log e no elements na versão local (-run’local’)
+- modificação do parâmetro org para dois ou mais organismos (faltava aspas simples dentro das aspas duplas no parâmetro entrez_query do blast)

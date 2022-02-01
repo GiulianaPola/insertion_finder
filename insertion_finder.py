@@ -128,38 +128,36 @@ def validateargs(args):
             print("Invalid database file (-d), invalid formatting!")
             valid=False
   
-  if valid==True:
-    if args.tab==None:
-      if args.run==None:
-        print("Missing the choice (-run) of BLAST search: 'local' or 'web'!")
-        valid=False
-      else:
-        try:
-          args.run.lower()
-        except:
-          print("BLASTn run choice (-run) must be string: 'local' or 'web'!")
-          valid=False
-        else:
-          if args.run.lower()=='web':
-            param['run']='web'
-          elif args.run.lower()=='local':
-            param['run']='local'
-          else:
-            print("Invalid BLASTn run choice (-run), must be 'local' or 'web'!")
-            valid=False
-
-  if valid==True:
-    if not args.org==None:
+  if valid==True and args.tab==None:
+    if args.run==None:
+      print("Missing the choice (-run) of BLAST search: 'local' or 'web'!")
+      valid=False
+    else:
       try:
-        taxids=[]
-        for id in args.org.split(','):
-          int(id)
-          taxids.append("txid{}[ORGN]".format(id))
+        args.run.lower()
       except:
-        print("Taxid(s) must be integers separated by commas!")
+        print("BLASTn run choice (-run) must be string: 'local' or 'web'!")
         valid=False
       else:
-        param['org']=' OR '.join(taxids)
+        if args.run.lower()=='web':
+          param['run']='web'
+        elif args.run.lower()=='local':
+          param['run']='local'
+        else:
+          print("Invalid BLASTn run choice (-run), must be 'local' or 'web'!")
+          valid=False
+
+  if valid==True and not args.org==None:
+    try:
+      taxids=[]
+      for id in args.org.split(','):
+        int(id)
+        taxids.append("txid{}[ORGN]".format(id))
+    except:
+      print("Taxid(s) must be integers separated by commas!")
+      valid=False
+    else:
+      param['org']=' OR '.join(taxids)
 
   if valid==True:
     if args.enddist==None:
@@ -173,7 +171,7 @@ def validateargs(args):
       else:
         param['enddist']=int(args.enddist)
   
-  if valid==True:
+  if valid==True and args.run.lower()=='local':
     if args.cpu==None:
       param['cpu']=10
     else:
@@ -464,7 +462,7 @@ elif args.help == False:
             comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True)
           else:
             #print(param['org'])
-            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True,entrez_query=param['org'])
+            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True,entrez_query="'{}'".format(param['org']))
         stdout, stderr = comando_blastn()
         tab=os.path.join(param["out"], "blastn.tab")
         qid,colunas,hits,d=opentable(tab)
@@ -502,8 +500,9 @@ elif args.help == False:
       log.write("\nQuery coverage: {}-{}".format(param["mincov"],param["maxcov"]))
       tabular.write("\nMaximum block distance: {}".format(param["enddist"]))
       log.write("\nMaximum block distance: {}".format(param["enddist"]))
-      log.write("\nNumber of threads: {}".format(param["cpu"]))
-      tabular.write("\nNumber of threads: {}".format(param["cpu"]))
+      if 'cpu' in param:
+        log.write("\nNumber of threads: {}".format(param["cpu"]))
+        tabular.write("\nNumber of threads: {}".format(param["cpu"]))
       tabular.write("\nElement color: {}\n".format(param["color"]))
       log.write("\nElement color: {}".format(param["color"]))
       tabular.write("\nQuery ID\tSubject ID\tElement identification\tElement 5' coordinate\tElement 3' coordinate\tElement length\tValid")
