@@ -488,8 +488,8 @@ elif args.help == False:
       qids=param.pop('qid')
       tabular.write('insertion_finder v{}'.format(version))
       log.write('insertion_finder v{}'.format(version))
-      tabular.write("Query file: {}".format(param["q"]))
-      log.write("Query file: {}".format(param["q"]))
+      tabular.write("\nQuery file: {}".format(param["q"]))
+      log.write("\nQuery file: {}".format(param["q"]))
       if not args.tab==None:
         tabular.write("\nBlastn table file: {}".format(args.tab))
         log.write("\nBlastn table file: {}".format(args.tab))
@@ -531,7 +531,7 @@ elif args.help == False:
         elif len(df1)>0:
           i=0
           nsid=len(df1['subject id'].tolist())
-          while not i==-1:
+          while i>-1 and i<nsid:
             hit=[]
             sid=df1['subject id'].tolist()[i]
             cov=df1['% query coverage per subject'].tolist()[i]
@@ -540,7 +540,7 @@ elif args.help == False:
             df2=df.loc[(df['subject id'] == sid)&(df['query id'] == qid)]
             reads=sorted(joinlists(df2['q. start'].tolist(),df2['q. end'].tolist()))
             contigs=assembly(reads)
-            hit.append("Alignments: {}".format(str(reads)))
+            hit.append("Alignments: {}".format(str(contigs)))
             if len(contigs)==1:
               if cov>=param['mincov'] and cov<=param['maxcov']:
                 estart,eend,elen=oneblock(contigs,qlen,param['enddist'])
@@ -575,6 +575,9 @@ elif args.help == False:
                       log.write("\nElement's fasta was't writen!")
                     else:
                       log.write("\nWriting element's fasta...")
+                  else:
+                    log.write("\nInvalid element!")
+                    tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,element,estart,eend,elen,'no'))
                 elif estart==0:
                   log.write('\n'.join(str(v) for v in hit))
                   log.write("\nInvalid element!")
@@ -619,7 +622,7 @@ elif args.help == False:
                 else:
                   log.write("\nInvalid element!")
                   tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,element,estart,eend,elen,'no'))
-            if i==nsid and not i==-1:
+            if i==nsid-1 and not i==-1:
               i=-1
               element='no'
               log.write('\n'.join(str(v) for v in hit))
