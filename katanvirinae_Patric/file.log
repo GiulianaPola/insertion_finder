@@ -1,0 +1,567 @@
+insertion_finder v2.2.0
+Query file: /home/oocyst/insertion_finder/fasta/katanvirinae.fasta
+Database file: /usr/local/genome/databases/patric/microviridae_Patric.fasta
+Element length: 4000-50000
+Query coverage: 30-90
+Maximum block distance: 50
+Number of threads: 18
+Element color: [255, 0, 0]
+
+Query id: UCBT01000010_1
+1690 hits!
+Query length: 19990
+Subject id: LT009739
+% query coverage per subject: 76
+Alignments: [[99, 2073], [2079, 3191], [4054, 4859], [5779, 6724], [7469, 7771], [7934, 8237], [8347, 11206], [11371, 12066], [12553, 12890], [13519, 15719], [16293, 19988]]
+Element coodinates: 4860 - 5778
+Element length: 918
+Invalid element!
+
+Query id: UBVP01000023_1
+646 hits!
+Query length: 14022
+Subject id: CP032923
+% query coverage per subject: 64
+Alignments: [[1499, 5236], [5388, 6146], [7215, 7525], [9818, 14022]]
+Element coodinates: 7526 - 9817
+Element length: 2291
+Invalid element!
+
+Query id: UBJJ01000006_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UCJE01000001_1
+1073 hits!
+Query length: 20033
+Subject id: QSNW01000002
+% query coverage per subject: 70
+Alignments: [[1, 7512], [13466, 20033]]
+Element coodinates: 7513 - 13465
+Element length: 5952
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id: UCHW01000004_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 7833], [8029, 9244], [9384, 11325], [13207, 15410], [15493, 18724], [18901, 20131]]
+Element coodinates: 11326 - 13206
+Element length: 1880
+Invalid element!
+
+Query id: UBSM01000003_1
+2099 hits!
+Query length: 19985
+Subject id: WJOL01000002
+% query coverage per subject: 89
+Alignments: [[1, 7879], [8032, 11180], [13061, 15264], [15347, 18578], [18755, 19985]]
+Element coodinates: 11181 - 13060
+Element length: 1879
+Invalid element!
+
+Query id: UEHP01000003_1
+663 hits!
+Query length: 20448
+Subject id: LMGN01000011
+% query coverage per subject: 73
+Alignments: [[1, 6709], [7356, 7448], [8532, 9962], [13764, 20448]]
+Element coodinates: 9963 - 13763
+Element length: 3800
+Invalid element!
+
+Query id: UCKX01000006_1
+1685 hits!
+Query length: 19984
+Subject id: CP039888
+% query coverage per subject: 75
+Alignments: [[3, 1456], [1457, 3698], [4272, 6472], [6825, 6861], [7925, 8620], [8785, 12011], [12214, 12516], [13261, 14206], [15126, 15931], [16794, 17915], [17921, 19889]]
+Element coodinates: 6862 - 7924
+Element length: 1062
+Invalid element!
+
+Query id: UCMP01000002_1
+1690 hits!
+Query length: 19990
+Subject id: LT009739
+% query coverage per subject: 76
+Alignments: [[3, 3698], [4272, 6472], [7101, 7438], [7925, 8620], [8785, 11644], [11754, 12057], [12220, 12522], [13267, 14212], [15132, 15937], [16800, 17912], [17918, 19892]]
+Element coodinates: 14213 - 15131
+Element length: 918
+Invalid element!
+
+Query id: UCNT01000005_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UCID01000013_1
+1076 hits!
+Query length: 20033
+Subject id: QSNW01000002
+% query coverage per subject: 66
+Alignments: [[792, 6568], [12522, 20033]]
+Element coodinates: 6569 - 12521
+Element length: 5952
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id: UCCT01000001_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UBTO01000001_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UEGU01000015_1
+1690 hits!
+Query length: 19990
+Subject id: LT009739
+% query coverage per subject: 76
+Alignments: [[3, 3698], [4272, 6472], [7101, 7438], [7925, 8620], [8785, 11644], [11754, 12057], [12220, 12522], [13267, 14212], [15132, 15937], [16800, 17912], [17918, 19892]]
+Element coodinates: 14213 - 15131
+Element length: 918
+Invalid element!
+
+Query id: UBJU01000006_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: PGTC01000017_1
+1039 hits!
+Query length: 21279
+Subject id: AFPM01000156
+% query coverage per subject: 42
+Alignments: [[7810, 8492], [9851, 10646], [11107, 11875], [11959, 12948], [14360, 15810], [15817, 17368], [17950, 18873], [19527, 21279]]
+Element coodinates: 12949 - 14359
+Element length: 1410
+Invalid element!
+
+Query id: UBNJ01000012_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 7833], [8029, 9244], [9384, 11325], [13207, 15410], [15493, 18724], [18901, 20131]]
+Element coodinates: 11326 - 13206
+Element length: 1880
+Invalid element!
+
+Query id: UBMP01000028_1
+2 hits!
+Query length: 6506
+Subject id: JACIBQ010000010
+% query coverage per subject: 14
+Alignments: [[994, 1886]]
+
+Query id: UBSX01000010_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 7833], [8029, 9244], [9384, 11325], [13207, 15410], [15493, 18724], [18901, 20131]]
+Element coodinates: 11326 - 13206
+Element length: 1880
+Invalid element!
+
+Query id: UBTW01000009_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 7833], [8029, 9244], [9384, 11325], [13207, 15410], [15493, 18724], [18901, 20131]]
+Element coodinates: 11326 - 13206
+Element length: 1880
+Invalid element!
+
+Query id: UCEJ01000005_1
+2099 hits!
+Query length: 19985
+Subject id: WJOL01000002
+% query coverage per subject: 89
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8806, 11954], [12107, 19985]]
+Element coodinates: 6926 - 8805
+Element length: 1879
+Invalid element!
+
+Query id: PVBG01000001_1
+1708 hits!
+Query length: 27088
+Subject id: PVBL01000009
+% query coverage per subject: 53
+Alignments: [[1, 7522], [20361, 27088]]
+Element coodinates: 7523 - 20360
+Element length: 12837
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id: UCIZ01000008_1
+2099 hits!
+Query length: 19985
+Subject id: WJOL01000002
+% query coverage per subject: 89
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8806, 11954], [12107, 19985]]
+Element coodinates: 6926 - 8805
+Element length: 1879
+Invalid element!
+
+Query id: UCGM01000006_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UBXH01000007_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UBRZ01000021_1
+671 hits!
+Query length: 13201
+Subject id: CP021371
+% query coverage per subject: 53
+Alignments: [[32, 6172], [6444, 7259]]
+Element coodinates: 6173 - 6443
+Element length: 270
+Invalid element!
+
+Query id: UCDE01000019_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UBLC01000026_1
+2099 hits!
+Query length: 19985
+Subject id: WJOL01000002
+% query coverage per subject: 89
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8806, 11954], [12107, 19985]]
+Element coodinates: 6926 - 8805
+Element length: 1879
+Invalid element!
+
+Query id: UICO01000009_1
+958 hits!
+Query length: 19987
+Subject id: CP039888
+% query coverage per subject: 46
+Alignments: [[6779, 6815], [7921, 8620], [8811, 12051], [12221, 12498], [12691, 15736], [17543, 19488]]
+Element coodinates: 15737 - 17542
+Element length: 1805
+Invalid element!
+
+Query id: UBOL01000015_1
+2099 hits!
+Query length: 19985
+Subject id: WJOL01000002
+% query coverage per subject: 89
+Alignments: [[1, 7879], [8032, 11180], [13061, 15264], [15347, 18578], [18755, 19985]]
+Element coodinates: 11181 - 13060
+Element length: 1879
+Invalid element!
+
+Query id: UEGZ01000045_1
+2 hits!
+Query length: 6497
+Subject id: JACIBQ010000010
+% query coverage per subject: 14
+Alignments: [[985, 1877]]
+
+Query id: UBUI01000001_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UBYJ01000012_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 7833], [8029, 9244], [9384, 11325], [13207, 15410], [15493, 18724], [18901, 20131]]
+Element coodinates: 11326 - 13206
+Element length: 1880
+Invalid element!
+
+Query id: UCLI01000001_1
+2099 hits!
+Query length: 19985
+Subject id: WJOL01000002
+% query coverage per subject: 89
+Alignments: [[1, 7879], [8032, 11180], [13061, 15264], [15347, 18578], [18755, 19985]]
+Element coodinates: 11181 - 13060
+Element length: 1879
+Invalid element!
+
+Query id: QITQ01000003_1
+800 hits!
+Query length: 20672
+Subject id: NHTQ01000001
+% query coverage per subject: 47
+Alignments: [[864, 2196], [3668, 3953], [4016, 5139], [5215, 7417], [14635, 15528], [15733, 16609], [17611, 19800], [19871, 20625]]
+Element coodinates: 7418 - 14634
+Element length: 7216
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id: UBUF01000003_1
+1690 hits!
+Query length: 19990
+Subject id: LT009739
+% query coverage per subject: 76
+Alignments: [[99, 2073], [2079, 3191], [4054, 4859], [5779, 6724], [7469, 7771], [7934, 8237], [8347, 11206], [11371, 12066], [12553, 12890], [13519, 15719], [16293, 19988]]
+Element coodinates: 4860 - 5778
+Element length: 918
+Invalid element!
+
+Query id: PHJF01000001_1
+775 hits!
+Query length: 20336
+Subject id: WPZN01000001
+% query coverage per subject: 21
+Alignments: [[1477, 2698], [3854, 4988], [16002, 17899]]
+Element coodinates: 4989 - 16001
+Element length: 11012
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id: UBYQ01000001_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 7833], [8029, 9244], [9384, 11325], [13207, 15410], [15493, 18724], [18901, 20131]]
+Element coodinates: 11326 - 13206
+Element length: 1880
+Invalid element!
+
+Query id: UBYD01000001_1
+1690 hits!
+Query length: 19990
+Subject id: LT009739
+% query coverage per subject: 76
+Alignments: [[99, 2073], [2079, 3191], [4054, 4859], [5779, 6724], [7469, 7771], [7934, 8237], [8347, 11206], [11371, 12066], [12553, 12890], [13519, 15719], [16293, 19988]]
+Element coodinates: 4860 - 5778
+Element length: 918
+Invalid element!
+
+Query id: QKLQ01000002_1
+1025 hits!
+Query length: 15236
+Subject id: CP013107
+% query coverage per subject: 52
+Alignments: [[20, 5265], [6397, 6425], [12393, 15063]]
+Element coodinates: 6426 - 12392
+Element length: 5966
+Valid element!
+Writing element's feature table...
+Writing element's fasta...
+
+Query id: UBZI01000007_1
+1690 hits!
+Query length: 19990
+Subject id: LT009739
+% query coverage per subject: 76
+Alignments: [[3, 3698], [4272, 6472], [7101, 7438], [7925, 8620], [8785, 11644], [11754, 12057], [12220, 12522], [13267, 14212], [15132, 15937], [16800, 17912], [17918, 19892]]
+Element coodinates: 14213 - 15131
+Element length: 918
+Invalid element!
+
+Query id: UBRW01000003_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UCCL01000012_1
+2099 hits!
+Query length: 19985
+Subject id: WJOL01000002
+% query coverage per subject: 89
+Alignments: [[1, 7879], [8032, 11180], [13061, 15264], [15347, 18578], [18755, 19985]]
+Element coodinates: 11181 - 13060
+Element length: 1879
+Invalid element!
+
+Query id: UBXJ01000012_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: AP014801_1
+89 hits!
+Query length: 20310
+Subject id: CP020385
+% query coverage per subject: 74
+Alignments: [[1, 2273], [2413, 7331], [11087, 11527], [11727, 12518], [12876, 13720], [14098, 15018], [15290, 20067]]
+Element coodinates: 7332 - 11086
+Element length: 3754
+Invalid element!
+
+Query id: UBOI01000009_1
+2099 hits!
+Query length: 19985
+Subject id: WJOL01000002
+% query coverage per subject: 89
+Alignments: [[1, 7879], [8032, 11180], [13061, 15264], [15347, 18578], [18755, 19985]]
+Element coodinates: 11181 - 13060
+Element length: 1879
+Invalid element!
+
+Query id: UBTD01000025_1
+646 hits!
+Query length: 14022
+Subject id: CP032923
+% query coverage per subject: 64
+Alignments: [[1499, 5236], [5388, 6146], [7215, 7525], [9818, 14022]]
+Element coodinates: 7526 - 9817
+Element length: 2291
+Invalid element!
+
+Query id: UCOE01000005_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: PXYL01000009_1
+861 hits!
+Query length: 9495
+Subject id: SURY01000015
+% query coverage per subject: 69
+Alignments: [[1, 2662], [2840, 6718]]
+Element coodinates: 2663 - 2839
+Element length: 176
+Invalid element!
+
+Query id: UBSC01000005_1
+1690 hits!
+Query length: 19990
+Subject id: LT009739
+% query coverage per subject: 76
+Alignments: [[99, 2073], [2079, 3191], [4054, 4859], [5779, 6724], [7469, 7771], [7934, 8237], [8347, 11206], [11371, 12066], [12553, 12890], [13519, 15719], [16293, 19988]]
+Element coodinates: 4860 - 5778
+Element length: 918
+Invalid element!
+
+Query id: UCBN01000002_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UCCP01000006_1
+1690 hits!
+Query length: 19990
+Subject id: LT009739
+% query coverage per subject: 76
+Alignments: [[99, 2073], [2079, 3191], [4054, 4859], [5779, 6724], [7469, 7771], [7934, 8237], [8347, 11206], [11371, 12066], [12553, 12890], [13519, 15719], [16293, 19988]]
+Element coodinates: 4860 - 5778
+Element length: 918
+Invalid element!
+
+Query id: UBKN01000010_1
+1690 hits!
+Query length: 19990
+Subject id: LT009739
+% query coverage per subject: 76
+Alignments: [[3, 3698], [4272, 6472], [7101, 7438], [7925, 8620], [8785, 11644], [11754, 12057], [12220, 12522], [13267, 14212], [15132, 15937], [16800, 17912], [17918, 19892]]
+Element coodinates: 14213 - 15131
+Element length: 918
+Invalid element!
+
+Query id: UEHM01000002_1
+2041 hits!
+Query length: 20131
+Subject id: WJOL01000002
+% query coverage per subject: 88
+Alignments: [[1, 1231], [1408, 4639], [4722, 6925], [8807, 10748], [10888, 12103], [12299, 20131]]
+Element coodinates: 6926 - 8806
+Element length: 1880
+Invalid element!
+
+Query id: UBXW01000014_1
+646 hits!
+Query length: 14022
+Subject id: CP032923
+% query coverage per subject: 64
+Alignments: [[1, 4205], [6498, 6808], [7877, 8635], [8787, 12524]]
+Element coodinates: 4206 - 6497
+Element length: 2291
+Invalid element!
+
+Processed 55 queries with 6 valid elements
+Duration: 0:33:03.574632
