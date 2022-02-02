@@ -27,7 +27,9 @@ import os
 log=[]
 elements=[]
 
-ajuda = 'insertion_finder - element insertion finder in a genome through a BLAST search\n'
+version="2.1.2"
+
+ajuda = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
 ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
 ajuda = ajuda + 'Usage: insertion_finder.py -q <query file> -d <database file> -run local\n'
 ajuda = ajuda + '\tinsertion_finder.py -q <query file> -tab <BLASTn table file>\n'
@@ -62,6 +64,7 @@ parser.add_argument('-maxlen')
 parser.add_argument('-mincov')
 parser.add_argument('-maxcov')
 parser.add_argument('-run')
+parser.add_argument('-version', action='store_true')
 parser.add_argument('-h', '--help', action='store_true')
 args = parser.parse_args()
 
@@ -90,10 +93,10 @@ def validateargs(args):
   
   if valid==True:
     if args.run==None:
-      if args.tab==None:
-        print("Missing BLASTn table file (-tab)!")
+      if args.tab==None and args.d==None:
+        print("Missing BLASTn table file (-tab) or database file (-d)!")
         valid=False
-      else:
+      elif not args.tab==None:
         if not os.path.isfile(args.tab):
           print("BLASTn table file (-tab) not exist!")
           valid=False
@@ -171,21 +174,22 @@ def validateargs(args):
       else:
         param['enddist']=int(args.enddist)
   
-  if valid==True and args.run.lower()=='local':
-    if args.cpu==None:
-      param['cpu']=10
-    else:
-      try:
-        int(args.cpu)
-      except:
-        print("Number of threads (-cpu) is not integer!")
-        valid=False
+  if valid==True and not args.run==None:
+    if args.run.lower()=='local':
+      if args.cpu==None:
+        param['cpu']=10
       else:
-        if int(args.cpu)>=1:
-          param['cpu']=int(args.cpu)
-        else:
-          print("Number of threads (-cpu) must be greater than or equal to 1!")
+        try:
+          int(args.cpu)
+        except:
+          print("Number of threads (-cpu) is not integer!")
           valid=False
+        else:
+          if int(args.cpu)>=1:
+            param['cpu']=int(args.cpu)
+          else:
+            print("Number of threads (-cpu) must be greater than or equal to 1!")
+            valid=False
           
   
   if valid==True:
@@ -211,11 +215,11 @@ def validateargs(args):
           print("Maximum query coverage (-maxcov) must be between 0 and 100!")
           valid=False
         if valid==True and int(args.mincov)<int(args.maxcov):
-          param['mincov']=args.mincov
-          param['maxcov']=args.maxcov
+          param['mincov']=int(args.mincov)
+          param['maxcov']=int(args.maxcov)
         elif int(args.mincov)>int(args.maxcov):
-          param['maxcov']=args.mincov
-          param['mincov']=args.maxcov
+          param['maxcov']=int(args.mincov)
+          param['mincov']=int(args.maxcov)
         elif int(args.mincov)==int(args.maxcov):
           print("Minimum query coverage (-mincov) parameter must be smaller than the maximum query coverage (-maxcov)!")
           valid=False
@@ -227,7 +231,7 @@ def validateargs(args):
         valid=False
       else:
         if int(args.maxcov)<=100 and int(args.maxcov)>=0:
-          param['maxcov']=args.maxcov
+          param['maxcov']=int(args.maxcov)
         else:
           print("Maximum query coverage (-maxcov) must be between 0 and 100!")
           valid=False
@@ -239,7 +243,7 @@ def validateargs(args):
         valid=False
       else:
         if int(args.mincov)<=100 and int(args.mincov)>=0:
-          param['mincov']=args.mincov
+          param['mincov']=int(args.mincov)
         else:
           print("Minimum query coverage (-mincov) must be between 0 and 100!")
           valid=False
@@ -267,11 +271,11 @@ def validateargs(args):
           print("Maximum element length (-maxlen) must be greater than or equal to 0!")
           valid=False
         if valid==True and int(args.minlen)<int(args.maxlen):
-          param['minlen']=args.minlen
-          param['maxlen']=args.maxlen
+          param['minlen']=int(args.minlen)
+          param['maxlen']=int(args.maxlen)
         elif int(args.minlen)>int(args.maxlen):
-          param['maxlen']=args.minlen
-          param['minlen']=args.maxlen
+          param['maxlen']=int(args.minlen)
+          param['minlen']=int(args.maxlen)
         elif int(args.minlen)==int(args.maxlen):
           print("Minimum element length (-minlen) must be smaller than the maximum element length (-maxlen)!")
           valid=False
@@ -283,7 +287,7 @@ def validateargs(args):
         valid=False
       else:
         if int(args.maxlen)>=0:
-          param['maxlen']=args.maxlen
+          param['maxlen']=int(args.maxlen)
         else:
           print("Maximum element length (-maxlen) must be greater than or equal to 0!")
           valid=False
@@ -295,7 +299,7 @@ def validateargs(args):
         valid=False
       else:
         if int(args.minlen)>=0:
-          param['minlen']=args.minlen
+          param['minlen']=int(args.minlen)
         else:
           print("Minimum element length (-minlen) must be greater than or equal to 0!")
           valid=False
@@ -446,6 +450,8 @@ if not len(sys.argv)>1:
     print(ajuda)
 elif args.help == True:
     print(ajuda)
+elif args.version == True:
+    print(version)
 elif args.help == False:
   valid,param=validateargs(args)
   #print(param)
@@ -454,15 +460,15 @@ elif args.help == False:
   else:
     qseqs=open(param['q'], "r").read()
     try:
-      if args.tab ==None:
+      if args.tab==None and not args.run==None:
         if param['run']=='local':
           comando_blastn = NcbiblastnCommandline(query=param['q'], db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),num_threads=param['cpu'])
         elif param['run']=='web':
           if not 'org' in param:
-            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True)
+            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True,task='megablast')
           else:
             #print(param['org'])
-            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True,entrez_query="'{}'".format(param['org']))
+            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True,entrez_query="'{}'".format(param['org']),task='megablast')
         stdout, stderr = comando_blastn()
         tab=os.path.join(param["out"], "blastn.tab")
         qid,colunas,hits,d=opentable(tab)
@@ -480,6 +486,8 @@ elif args.help == False:
       hits=param.pop('hits')
       colunas=param.pop('colunas')
       qids=param.pop('qid')
+      tabular.write('insertion_finder v{}'.format(version))
+      log.write('insertion_finder v{}'.format(version))
       tabular.write("Query file: {}".format(param["q"]))
       log.write("Query file: {}".format(param["q"]))
       if not args.tab==None:
@@ -578,7 +586,7 @@ elif args.help == False:
                 tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,sid,element,'no'))
                 i=-1
             elif len(contigs)>1:
-              if cov>=param['mincov'] and cov<=param['maxcov']:
+              if cov<=param['maxcov']:
                 element='yes'
                 start,end=splitlist(contigs)
                 estart,eend,elen=findelement(start,end)
@@ -614,6 +622,10 @@ elif args.help == False:
             if i==nsid and not i==-1:
               i=-1
               element='no'
+              log.write('\n'.join(str(v) for v in hit))
+              log.write("\nElement coodinates: {} - {}".format(estart,eend))
+              log.write("\nElement length: {}".format(elen))
+              log.write("\nInvalid element!")
               tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,sid,element,'no'))
             elif not i==-1:
               i+=1
