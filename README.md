@@ -111,3 +111,7 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 - adição da opção megablast na busca BLASTn (task = ’megablast’)
 - correção de erro, problema nos parâmetros maxlen e minlen
 - adição do parâmetro -version que mostra qual a versão do programa
+
+## 03/02/2022 (2.2.1)
+- adição do tempo de execução da busca BLAST no arquivos “file.log” e “elements.txt”
+- modificação da mensagem quando o elemento é inválido para ficar mais claro: “Invalid element, smaller than valid size!” ou “Invalid element, larger than valid size!"
