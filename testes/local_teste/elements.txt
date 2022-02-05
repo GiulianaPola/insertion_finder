@@ -1,0 +1,16 @@
+Query file: /home/oocyst/insertion_finder/fasta/teste.fasta
+Database file: /usr/local/genome/databases/patric/microviridae_Patric.fasta
+Element length: 4000-8000
+Query coverage: 30-90
+Maximum block distance: 100
+Number of threads: 18
+Element color: [128, 128, 0]
+
+Query ID	Subject ID	Element identification	Element 5' coordinate	Element 3' coordinate	Element length	Valid
+ASYJ01000020_1	CP023403	yes	7463	11917	4454	yes
+AQCH01000070_1	LNWE01000003	yes	7752	13535	5783	yes
+AGZN01000032_1	ACUA01000003	yes	7809	12411	4602	yes
+ARBZ01000001_1	CP003667	yes	1059	11851	10792	no
+
+Processed 4 queries with 3 valid elements
+Duration: 0:14:09.272632

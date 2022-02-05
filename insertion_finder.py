@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 start_time = datetime.now()
 
-version="2.2.1"
+version="2.2.2"
 
 ajuda = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
 ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
@@ -469,14 +469,17 @@ else:
         blast_start = datetime.now()
         print('Starting BLASTn search...')
         stdout, stderr = comando_blastn()
-        blast_time = datetime.now()- start_time
+        blast_time = datetime.now() - blast_start
         print('BLASTn search execution time: {}'.format(blast_time))
     except:
       print("The BLASTn search was not completed successfully!")
     else:
       try:
-        tab=os.path.join(param["out"], "blastn.tab")
-        qid,colunas,hits,d=opentable(tab)
+        if 'tab' in param:
+          qid,colunas,hits,d=opentable(param['tab'])
+        else:
+          tab=os.path.join(param["out"], "blastn.tab")
+          qid,colunas,hits,d=opentable(tab)
       except:
         print("Table BLASTn was not read!")
       else:
@@ -536,15 +539,15 @@ else:
               df1=df.loc[df['query id'] == qid]
               log.write("\n\nQuery id: {}".format(qid))
               log.write("\n{} hits!".format(len(df1)))
-              qlen=df1['query length'].tolist()[0]
-              log.write("\nQuery length: {}\n".format(qlen))
-              df1=df1.groupby('subject id').agg({'% query coverage per subject':'mean'}).reset_index()
-              df1=df1.sort_values(by=['% query coverage per subject'],ascending=False)
               if len(df1)==0:
                 element='no'
                 sid='no hits'
                 tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,sid,element,'no'))
               elif len(df1)>0:
+                qlen=df1['query length'].tolist()[0]
+                log.write("\nQuery length: {}\n".format(qlen))
+                df1=df1.groupby('subject id').agg({'% query coverage per subject':'mean'}).reset_index()
+                df1=df1.sort_values(by=['% query coverage per subject'],ascending=False)
                 i=0
                 nsid=len(df1['subject id'].tolist())
                 while i>-1 and i<nsid:
@@ -667,3 +670,4 @@ else:
             print('Program execution time: {}'.format(end_time - start_time))
             log.close()
             tabular.close()
+print('\a')

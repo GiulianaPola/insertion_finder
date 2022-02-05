@@ -115,3 +115,6 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 ## 03/02/2022 (2.2.1)
 - adição do tempo de execução da busca BLAST no arquivos “file.log” e “elements.txt”
 - modificação da mensagem quando o elemento é inválido para ficar mais claro: “Invalid element, smaller than valid size!” ou “Invalid element, larger than valid size!"
+
+## 05/02/2022 (2.2.2)
+- Correção de bug na hora de pegar o tamanho da query
