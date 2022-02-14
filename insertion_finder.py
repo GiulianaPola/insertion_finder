@@ -9,16 +9,12 @@
 
 #warnings.showwarning = warn_with_traceback
 
-#python insertion_finder.py -query "NZ_EQ973357.fasta" -db "db/genomas.fasta"
-#python insertion_finder.py -query "PVBG01000001_1.fasta" -db "patric/Rhodo_Rhizo.fasta"
-#python insertion_finder.py -q "elements.fasta" -d "patric/Rhodo_Rhizo.fasta" -out "teste_Rhodobacterales"
-
 import argparse
 import sys
 from datetime import datetime
 start_time = datetime.now()
 
-version="2.2.2"
+version="2.2.3"
 
 ajuda = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
 ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
@@ -545,7 +541,7 @@ else:
                 tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,sid,element,'no'))
               elif len(df1)>0:
                 qlen=df1['query length'].tolist()[0]
-                log.write("\nQuery length: {}\n".format(qlen))
+                log.write("\nQuery length: {}".format(qlen))
                 df1=df1.groupby('subject id').agg({'% query coverage per subject':'mean'}).reset_index()
                 df1=df1.sort_values(by=['% query coverage per subject'],ascending=False)
                 i=0
@@ -554,7 +550,7 @@ else:
                   hit=[]
                   sid=df1['subject id'].tolist()[i]
                   cov=df1['% query coverage per subject'].tolist()[i]
-                  hit.append('Subject id: {}'.format(sid))
+                  hit.append('\nSubject id: {}'.format(sid))
                   hit.append('% query coverage per subject: {}'.format(cov))
                   df2=df.loc[(df['subject id'] == sid)&(df['query id'] == qid)]
                   reads=sorted(joinlists(df2['q. start'].tolist(),df2['q. end'].tolist()))
@@ -574,10 +570,6 @@ else:
                         log.write("\nNo valid hits!")
                         cont+=1
                         tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,'no valid hits','no','no'))
-                      if estart==0 and i==nsid-1:
-                        log.write("\nInvalid element, block distance greater than the maximum distance on both sides!")
-                        tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,'no valid hits','no','no'))
-                        cont+=1
                       if estart>0:
                         log.write('\n'.join(str(v) for v in hit))
                         i=-1      
@@ -616,7 +608,7 @@ else:
                           tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'no'))
                     elif cov<=param['mincov']:
                       log.write('\n'.join(str(v) for v in hit))
-                      log.write('Invalid element, % query coverage less than valid coverage!')
+                      log.write('\nInvalid element, % query coverage less than valid coverage!')
                       tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,sid,'no','no'))
                       i=-1
                       cont+=1
@@ -659,7 +651,7 @@ else:
                         if elen>=param['maxlen']:
                           log.write("\nInvalid element, larger than valid size!")
                         tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'no'))
-                  if i<nsid-1 and not i==-1:
+                  if not i==-1:
                     i+=1
             tabular.write('\n\nProcessed {} queries with {} valid elements'.format(len(qids),econt))
             log.write('\n\nProcessed {} queries with {} valid elements'.format(len(qids),econt))

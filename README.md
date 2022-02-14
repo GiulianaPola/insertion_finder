@@ -118,3 +118,7 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 
 ## 05/02/2022 (2.2.2)
 - Correção de bug na hora de pegar o tamanho da query
+
+## 14/02/2022 (2.2.3)
+- Correção na formatação da mensagem “Invalid element,  % query coverage less than valid coverage!” no file.log
+- Correção dos erro de repetição dos casos de “no valid hits” no elements.txt e no file.log
