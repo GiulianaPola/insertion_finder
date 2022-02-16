@@ -14,7 +14,7 @@ import sys
 from datetime import datetime
 start_time = datetime.now()
 
-version="2.2.3"
+version="2.2.5"
 
 ajuda = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
 ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
@@ -59,6 +59,22 @@ def isfasta(filename):
     with open(filename, "r") as handle:
         fasta = SeqIO.parse(handle, "fasta")
         return any(fasta)
+
+def rename(i,name,typ):
+  path=''
+  if '/' in name:
+    path=os.path.split(name)[0]
+    name=os.path.split(name)[1]
+  newname=os.path.join(path, name)
+  if typ is 'dir':
+    while os.path.isdir(newname):
+      i+=1
+      newname=os.path.join(path, str(name+str(i)))
+  elif typ is 'file':
+    while os.path.isfile(newname):
+      i+=1
+      newname=os.path.join(path, str(name+str(i)))
+  return newname
 
 def validateargs(args):
   valid=True
@@ -317,11 +333,7 @@ def validateargs(args):
    if not args.out==None:
      if os.path.isdir(args.out):
        print("Output directory (-out) {} exists!".format(args.out))
-       i=1
-       out=args.out
-       while os.path.isdir(out):
-         i+=1
-         out=args.out+"_"+str(i)
+       out=rename(1,args.out,'dir')
        os.mkdir(out)
        print("Creating output directory (-out) {}...".format(out))
        param["out"]=out
@@ -334,16 +346,25 @@ def validateargs(args):
          print("Output directory (-out) not valid\n")
          valid=False
    else:
-     i=1
-     out='output_dir'
-     while os.path.isdir(out):
-       i+=1
-       out='output_dir'+str(i)
+     out=rename(1,'output_dir','dir')
      os.mkdir(out)
      print("Creating output directory (-out) {}...".format(out))
      param["out"]=out
     
   return valid,param
+
+def blast(param, q, out):
+  if param['run']=='local':
+    comando_blastn = NcbiblastnCommandline(query=q, db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], out),num_threads=param['cpu'])
+  elif param['run']=='web':
+    if not 'org' in param:
+      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], out),remote=True,task='megablast')
+    else:
+      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], out),remote=True,entrez_query="'{}'".format(param['org']),task='megablast')
+  blast_start = datetime.now()
+  stdout, stderr = comando_blastn()
+  blast_time = datetime.now() - blast_start
+  return blast_time
 
 def opentable(tab):
   blast_result = open(tab,"r")
@@ -452,56 +473,53 @@ else:
     print(ajuda)
   else:
     print('Valid arguments!')
-    qseqs=open(param['q'], "r").read()
     try:
-      if args.tab==None and not args.run==None:
-        if param['run']=='local':
-          comando_blastn = NcbiblastnCommandline(query=param['q'], db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),num_threads=param['cpu'])
-        elif param['run']=='web':
-          if not 'org' in param:
-            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True,task='megablast')
-          else:
-            comando_blastn = NcbiblastnCommandline(query=param['q'], db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=os.path.join(param["out"], "blastn.tab"),remote=True,entrez_query="'{}'".format(param['org']),task='megablast')
-        blast_start = datetime.now()
-        print('Starting BLASTn search...')
-        stdout, stderr = comando_blastn()
-        blast_time = datetime.now() - blast_start
-        print('BLASTn search execution time: {}'.format(blast_time))
+      log=open(os.path.join(param["out"], 'file.log'),'w')
+      log.write('insertion_finder v{}'.format(version))
     except:
-      print("The BLASTn search was not completed successfully!")
-    else:
+      print('Log file was not created!')
+    else:  
+      qseqs=open(param['q'], "r").read()
       try:
-        if 'tab' in param:
-          qid,colunas,hits,d=opentable(param['tab'])
-        else:
-          tab=os.path.join(param["out"], "blastn.tab")
-          qid,colunas,hits,d=opentable(tab)
+        if args.tab==None and not args.run==None:
+          log.write('\nStarting BLASTn search...')
+          print('Starting BLASTn search...')
+          blast_time=blast(param, param['q'], "blastn.tab")
+          print('BLASTn search execution time: {}'.format(blast_time))
+          log.write('\nBLASTn search execution time: {}'.format(blast_time))
       except:
-        print("Table BLASTn was not read!")
+        print("The BLASTn search was not completed successfully!")
+        log.write("\nThe BLASTn search was not completed successfully!")
       else:
-        print("Opening BLASTn table...")
-        param['qid']=qid
-        param['colunas']=colunas
-        param['hits']=hits    
-        cont=0
-        econt=0
         try:
-          tabular=open(os.path.join(param["out"], 'elements.txt'),'w')
+          if 'tab' in param:
+            qid,colunas,hits,d=opentable(param['tab'])
+          else:
+            tab=os.path.join(param["out"], "blastn.tab")
+            qid,colunas,hits,d=opentable(tab)
         except:
-          print('Elements table was not created!')
+          print("Table BLASTn was not read!")
+          log.write("\nTable BLASTn was not read!")
         else:
+          print("Opening BLASTn table...")
+          log.write("\nOpening BLASTn table...")
+          param['qid']=qid
+          param['colunas']=colunas
+          param['hits']=hits    
+          cont=0
+          econt=0
           try:
-            log=open(os.path.join(param["out"], 'file.log'),'w')
+            tabular=open(os.path.join(param["out"], 'elements.txt'),'w')
           except:
-            print('Log file was not created!')
-          else:  
+            print('Elements table was not created!')
+            log.write('\nElements table was not created!')
+          else:
             hits=param.pop('hits')
             colunas=param.pop('colunas')
             qids=param.pop('qid')
             tabular.write('insertion_finder v{}'.format(version))
-            log.write('insertion_finder v{}'.format(version))
             tabular.write("\nQuery file: {}".format(param["q"]))
-            log.write("\nQuery file: {}".format(param["q"]))
+            log.write("\n\nQuery file: {}".format(param["q"]))
             if not args.tab==None:
               tabular.write("\nBlastn table file: {}".format(args.tab))
               log.write("\nBlastn table file: {}".format(args.tab))

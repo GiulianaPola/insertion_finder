@@ -119,6 +119,14 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 ## 05/02/2022 (2.2.2)
 - Correção de bug na hora de pegar o tamanho da query
 
-## 14/02/2022 (2.2.3)
+## 13/02/2022 (2.2.3)
 - Correção na formatação da mensagem “Invalid element,  % query coverage less than valid coverage!” no file.log
 - Correção dos erro de repetição dos casos de “no valid hits” no elements.txt e no file.log
+
+## 14/02/2022 (2.2.4)
+- Criação do file.log logo após a validação dos argumentos
+- Adição das mensagens da tela exibidas depois da validação dos argumentos no file.log
+
+## 15/02/2022 (2.2.5)
+- Os comandos que executam a busca blast foram colocados na função blast(<parâmetros da pesquisa BLAST>,<arquivo query>,<arquivo de saida da busca BLAST>) para serem utilizados mais de uma vez dentro do código, caso necessário
+- Os comandos que verificam se a pasta de saida existe e caso exista gera um novo nome foram colocados na função rename(<número>,<caminho>,<’dir’|’file’>)
