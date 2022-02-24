@@ -1,18 +1,17 @@
-insertion_finder v2.2.1
+insertion_finder v2.3.0
 Query file: /home/oocyst/insertion_finder/fasta/teste.fasta
 Database file: nt
-BLASTn search execution time: 0:41:10.401951
-Taxids: 2,2157
+BLASTn search execution time: 0:08:51.799726
 Element length: 4000-50000
 Query coverage: 30-90
 Maximum block distance: 50
-Element color: [128, 128, 0]
+Element color: [255, 0, 0]
 
 Query ID	Subject ID	Element identification	Element 5' coordinate	Element 3' coordinate	Element length	Valid
-ASYJ01000020_1	gi|1352861641|gb|CP023010.2|	yes	7463	11917	4454	yes
-ARBZ01000001_1	gi|532126075|gb|CP003667.1|	yes	1059	11851	10792	yes
+AGZN01000032_1	gi|2032372039|gb|CP042285.1|	yes	7809	12411	4602	yes
 AQCH01000070_1	gi|99036121|gb|CP000377.1|	yes	7680	13595	5915	yes
-AGZN01000032_1	gi|1576727513|emb|LR215978.1|	yes	7809	12411	4602	yes
+ARBZ01000001_1	gi|2057894373|tpg|BK051052.1|	yes	16165	19550	3385	no
+ASYJ01000020_1	gi|1543010584|gb|CP034594.1|	yes	7479	11917	4438	yes
 
-Processed 4 queries with 4 valid elements
-Program execution time: 0:41:10.731620
+Processed 4 queries with 3 valid elements
+Program execution time: 0:08:55.458946

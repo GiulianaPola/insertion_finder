@@ -1,22 +1,24 @@
 # insertion_finder - element insertion finder in a genome through a BLAST search
 (c) 2021. Arthur Gruber & Giuliana Pola
 
-Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST against *-run* 'local'
-
-*insertion_finder.py -q* query file *-tab* BLASTn table file
+Usage: *insertion_finder.py -q* sequence to search with *-run* 'local' *-d* database to BLAST against 
 
 *insertion_finder.py -q* query file *-run* 'web'
+
+*insertion_finder.py -q* query file *-run* 'local' *-d* database to BLAST against *-tab* BLASTn table file
+
+*insertion_finder.py -q* query file *-tab* BLASTn table file 
 
 **Mandatory parameters:**
 
 * *-q* (fasta or multifasta file) - Sequence to search with
 
-* *-d* (multifasta file) - Database to BLAST against
-
-* *-tab* (table file) - BLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)
 * *-run* (local|web) - Choice of running local or web BLAST search
 
+* *-d* (multifasta file) - Database to BLAST against
+
 **Optional parameters:**
+* *-tab* (table file) - BLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)
 * *-org* (int) - Taxid(s) to restrict the database of the BLASTn search
 
 * *-out* (path) - Output directory
@@ -128,5 +130,11 @@ Usage: *insertion_finder.py -q* sequence to search with *-d* database to BLAST a
 - Adição das mensagens da tela exibidas depois da validação dos argumentos no file.log
 
 ## 15/02/2022 (2.2.5)
-- Os comandos que executam a busca blast foram colocados na função blast(<parâmetros da pesquisa BLAST>,<arquivo query>,<arquivo de saida da busca BLAST>) para serem utilizados mais de uma vez dentro do código, caso necessário
-- Os comandos que verificam se a pasta de saida existe e caso exista gera um novo nome foram colocados na função rename(<número>,<caminho>,<’dir’|’file’>)
+- Os comandos que executam a busca blast foram colocados na função blast(parâmetros da pesquisa BLAST,arquivo query,arquivo de saida da busca BLAST) para serem utilizados mais de uma vez dentro do código, caso necessário
+- Os comandos que verificam se a pasta de saida existe e caso exista gera um novo nome foram colocados na função rename(número,caminho,’dir’|’file’)
+
+## 23/02/2022 (2.3.0)
+- Adição da rotina que confere a tabela BLAST e, caso alguma sequência do arquivo query esteja faltando, realiza outra busca BLAST com as sequências não processadas ou incompletas e repete a rotina até que não falte nenhuma sequência
+- Criação da função missingquery(arquivo tabela BLAST,arquivo query no formato fasta,id das sequências que foram processadas) que junta o conteúdo das tabelas BLAST em um único arquivo “blastn.tab”, verifica se as sequências do arquivo query estão na tabela BLAST e, caso não estejam, cria um novo arquivo de query com as sequências não encontradas ou incompletas, e retorna o id das sequências processadas
+- Parâmetro run (local|web) tornou-se obrigatório
+- Parâmetro d (arquivo database) torna-se obrigatório caso o parâmetro run seja local
