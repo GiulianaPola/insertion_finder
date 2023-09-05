@@ -51,7 +51,7 @@ python insertion_finder.py -q <query file> -tab <BLASTn table file>
 
 ## Contact
 
-To report bugs, to ask for help and to give any feedback, please contact Arthur Gruber (argruber@usp.br) or Giuliana L. Pola (giulianapolasp@gmail.com).
+To report bugs, to ask for help and to give any feedback, please contact Arthur Gruber (argruber@usp.br) or Giuliana L. Pola (giulianapola@usp.br).
 
 ## Versions
 
