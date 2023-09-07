@@ -18,35 +18,24 @@ python insertion_finder.py -q <query file> -tab <BLASTn table file>
 ```
 ### Mandatory parameters:
 ```
--i <file name>	 	    Input file (multiple alignment in FASTA or CLustal formats).
--q <file name>	 	    Sequence to search with (fasta or multifasta file)
--run <local|web>	 	    Choice of running local or web BLAST search
--d <file name>	 	    Database to BLAST against (multifasta file)
+-q <file name>      Sequence to search with (fasta or multifasta file)
+-run <local|web>    Choice of running local or web BLAST search
+-d <file name>      Database to BLAST against (multifasta file)
 ```
 
 ### Optional parameters:
 ```
--conf           			Configuration file
-
--tab <file name>	 	    BLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)(table file)
--org <integer>	 	    Taxid(s) to restrict the database of the BLASTn search
-
--out <path|name>	 	    Output directory
-  
--minlen <integer> 	 	    Minimum element's length in base pairs(bp) (default: 5000)
-
--maxlen <integer>	 	    Maximum element's length in base pairs(bp) (default: 50000)
-
--mincov <integer>	 	    Minimum % query coverage per subject (default: 30)
-
--maxcov <integer>	 	    Maximum % query coverage per subject (default: 90)
-
--enddist <integer>	 	    Maximum distance between block tip and query tip in base pairs(bp) (default: 50)
-
--cpu <integer>	 	    Number of threads to execute the blastn search (default: 10)
-
--color <three integers separated by commas>	 	    Element RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)
-
+-conf <file name>   Configuration file
+-tab <file name>    BLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)(table file)
+-org <integer>      Taxid(s) to restrict the database of the BLASTn search
+-out <path|name>    Output directory
+-minlen <integer>   Minimum element's length in base pairs(bp) (default: 5000)
+-maxlen <integer>   Maximum element's length in base pairs(bp) (default: 50000)
+-mincov <integer>   Minimum % query coverage per subject (default: 30)
+-maxcov <integer>   Maximum % query coverage per subject (default: 90)
+-enddist <integer>  Maximum distance between block tip and query tip in base pairs(bp) (default: 50)
+-cpu <integer>      Number of threads to execute the blastn search (default: 10)
+-color <string>     Element RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)
 ``` 
 
 ## Contact
