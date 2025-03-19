@@ -2,6 +2,9 @@
 
 Insertion_finder is a tool in Python that performs similarity searches against genomic nucleotide sequences and automatically analyzes the results, identifying occurrences without the presence of the element. By comparing the sequences with and without the element, it is possible to accurately determine the 5' and 3' insertion points. 
 
+<img src="insertion_finder_pipeline.jpg" width="700" />
+
+
 ##   Instalation
 
 Insertion_finder does not need to be installed. The user should only download the insertion_finder.py file.
