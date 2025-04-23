@@ -46,6 +46,9 @@ python insertion_finder.py -q <query file> -tab <BLASTn table file>
 To report bugs, to ask for help and to give any feedback, please contact Arthur Gruber (argruber@usp.br) or Giuliana L. Pola (giulianapola@usp.br).
 
 ## Versions
+### 2.4.0
+- Refactor: dropped pandas, added evalue to BLAST output
+- Replaced pandas with native Python for better portability and fewer dependencies. Also updated the BLAST output format to include the 'evalue' field, enabling more refined filtering. Internal logic was cleaned up for readability and maintainability, with no changes to the CLI or output structure.
 
 ### 2.3.0
 - Addition of the routine that checks the BLAST table and, in case some sequence of the query file is missing, performs another BLAST search with the unprocessed or incomplete sequences and repeats the routine until no sequence is missing

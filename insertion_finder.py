@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import traceback
 import warnings
 def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
@@ -17,29 +17,30 @@ import os
 import re
 param=dict()
 
-version="2.3.0"
+version="2.4.0"
 
-ajuda = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
-ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
-ajuda = ajuda + 'Usage: insertion_finder.py -q <query file> -d <database file> -run local\n'
-ajuda = ajuda + '\tinsertion_finder.py -q <query file> -d <database file> -run local -tab <BLASTn table file>\n'
-ajuda = ajuda + '\tinsertion_finder.py -q <query file> -run web -tab <BLASTn table file>\n'
-ajuda = ajuda + '\tinsertion_finder.py -q <query file> -run web\n'
-ajuda = ajuda + '\nMandatory parameters:\n'
-ajuda = ajuda + '-q <fasta or multifasta file>\tSequence to search with\n'
-ajuda = ajuda + '-d <multifasta file>\tDatabase to BLAST against\n'
-ajuda = ajuda + '-run <local|web>\tchoice of running local or web BLAST search\n'
-ajuda = ajuda + '\nOptional parameters:\n'
-ajuda = ajuda + '-tab <table file>\tBLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)\n'
-ajuda = ajuda + '-org <int>\tTaxid(s) to restrict the database of the BLASTn search\n'
-ajuda = ajuda + "-out <path>\tOutput directory (default: output_dir1)\n"
-ajuda = ajuda + "-enddist <int>\tMaximum distance between block tip and query tip in base pairs(bp) (default: 50)\n"
-ajuda = ajuda + "-minlen <int>\tMinimum element's length in base pairs(bp) (default: 5000)\n"
-ajuda = ajuda + "-maxlen <int>\tMaximum element's length in base pairs(bp) (default: 50000)\n"
-ajuda = ajuda + "-mincov <int>\tMinimum % query coverage per subject (default: 30)\n"
-ajuda = ajuda + "-maxcov <int>\tMaximum % query coverage per subject (default: 90)\n"
-ajuda = ajuda + "-cpu <int>\tNumber of threads to execute the blastn search (default: 18)\n"
-ajuda = ajuda + "-color <int>\tThe RGB color of the element that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)"
+help = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
+help = help + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
+help = help + 'For the latest version acess: https://github.com/GiulianaPola/insertion_finder\n'
+help = help + 'Usage: insertion_finder.py -q <query file> -d <database file> -run local\n'
+help = help + '\tinsertion_finder.py -q <query file> -d <database file> -run local -tab <BLASTn table file>\n'
+help = help + '\tinsertion_finder.py -q <query file> -run web -tab <BLASTn table file>\n'
+help = help + '\tinsertion_finder.py -q <query file> -run web\n'
+help = help + '\nMandatory parameters:\n'
+help = help + '-q <fasta or multifasta file>\tSequence to search with\n'
+help = help + '-d <multifasta file>\tDatabase to BLAST against\n'
+help = help + '-run <local|web>\tchoice of running local or web BLAST search\n'
+help = help + '\nOptional parameters:\n'
+help = help + '-tab <table file>\tBLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)\n'
+help = help + '-org <int>\tTaxid(s) to restrict the database of the BLASTn search\n'
+help = help + "-out <path>\tOutput directory (default: output_dir1)\n"
+help = help + "-enddist <int>\tMaximum distance between block tip and query tip in base pairs(bp) (default: 50)\n"
+help = help + "-minlen <int>\tMinimum element's length in base pairs(bp) (default: 5000)\n"
+help = help + "-maxlen <int>\tMaximum element's length in base pairs(bp) (default: 50000)\n"
+help = help + "-mincov <int>\tMinimum % query coverage per subject (default: 30)\n"
+help = help + "-maxcov <int>\tMaximum % query coverage per subject (default: 90)\n"
+help = help + "-cpu <int>\tNumber of threads to execute the blastn search (default: 18)\n"
+help = help + "-color <int>\tThe RGB color of the element that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)"
 
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-q')
@@ -70,11 +71,11 @@ def rename(i,name,typ):
     path=os.path.split(name)[0]
     name=os.path.split(name)[1]
   newname=os.path.join(path, name)
-  if typ is 'dir':
+  if typ=='dir':
     while os.path.isdir(newname):
       i+=1
       newname=os.path.join(path, str(name+str(i)))
-  elif typ is 'file':
+  elif typ=='file':
     while os.path.isfile(newname):
       i+=1
       newname=os.path.join(path, str(name+str(i)))
@@ -380,16 +381,16 @@ def blast(param, q,blast_time='',seqs=[]):
   from Bio.Blast.Applications import NcbiblastnCommandline
   if param['run']=='local':
     print("Starting BLAST search...")
-    comando_blastn = NcbiblastnCommandline(query=q, db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=tab,num_threads=param['cpu'])
+    comando_blastn = NcbiblastnCommandline(query=q, db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend evalue'", out=tab,num_threads=param['cpu'])
     stdout, stderr = comando_blastn()
   elif param['run']=='web':
     if not 'org' in param:
       print("Starting BLAST search...")
-      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=tab,remote=True,task='megablast')
+      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend evalue'", out=tab,remote=True,task='megablast')
       stdout, stderr = comando_blastn()
     else:
       print("Starting BLAST search...")
-      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=tab,remote=True,entrez_query="'{}'".format(param['org']),task='megablast')
+      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend evalue'", out=tab,remote=True,entrez_query="'{}'".format(param['org']),task='megablast')
       stdout, stderr = comando_blastn()
   if blast_time=='':
     blast_time=(datetime.now() - blast_start)
@@ -443,7 +444,7 @@ def missingquery(tab,qry,seqs=[]):
       print("BLAST search missing query: {}!".format(misseqs[0]))
     else:
       print("BLAST search missing queries: {}!".format(", ".join(misseqs)))
-    newqfile=open(os.path.join(param["out"], 'newquery.fasta'),'w')
+    newqfile=(os.path.join(param["out"], 'newquery.fasta'),'w')
     newqfile.write(newq)
     newqfile.close()
     if os.path.isfile(os.path.join(param["out"], 'blastn.tab')):
@@ -524,13 +525,12 @@ def extract(qseqs, qid, estart, eend):
   return seq[int(estart-1):eend]
 
 if not len(sys.argv)>1:
-    print(ajuda)
+    print(help)
 elif args.help == True:
-    print(ajuda)
+    print(help)
 elif args.version == True:
     print(version)
 else:
-  import pandas as pd
   from Bio import SeqIO
   import os
   log=[]
@@ -538,7 +538,7 @@ else:
   valid,param=validateargs(args)
   #print(param)
   if valid==False:
-    print(ajuda)
+    print(help)
   else:
     print('Valid arguments!')
     try:
@@ -607,33 +607,87 @@ else:
           tabular.write("\nQuery ID\tSubject ID\tElement identification\tElement 5' coordinate\tElement 3' coordinate\tElement length\tValid")
           #print("Columns {},{}".format(len(param['columns']),param['columns'][0]))
           #print("Hits {},{}".format(len(param['hits']),param['hits'][0]))
-          df=pd.DataFrame(columns=param['columns'],data=param['hits'])
-          df=df.apply(pd.to_numeric, errors='ignore').drop_duplicates()
+          #df=pd.DataFrame(columns=param['columns'],data=param['hits'])
+          df = [dict(zip(param['columns'], row)) for row in param['hits']]
+
+          def to_numeric(value):
+              try:
+                  return int(value)
+              except (ValueError, TypeError):
+                  try:
+                      return float(value)
+                  except (ValueError, TypeError):
+                      return value
+
+          for row in df:
+              for key in list(row.keys()):
+                  row[key] = to_numeric(row[key])
+
+                
+          seen = set()
+          unique_rows = []
+          for row in df:
+              row_tuple = tuple(sorted(row.items()))
+              if row_tuple not in seen:
+                  seen.add(row_tuple)
+                  unique_rows.append(row)
+  
           for qid in param['qid']:
-            df1=df.loc[df['query id'] == qid]
-            log.write("\n\nQuery id: {}".format(qid))
-            log.write("\n{} hits!".format(len(df1)))
-            if len(df1)==0:
-              element='no'
-              sid='no hits'
-              tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,sid,element,'no'))
-            elif len(df1)>0:
-              qlen=df1['query length'].tolist()[0]
-              log.write("\nQuery length: {}".format(qlen))
-              df1=df1.groupby('subject id').agg({'% query coverage per subject':'mean'}).reset_index()
-              df1=df1.sort_values(by=['% query coverage per subject'],ascending=False)
-              i=0
-              nsid=len(df1['subject id'].tolist())
+              df1 = [row for row in unique_rows if row.get('query id') == qid]
+              log.write("\n\nQuery id: {}".format(qid))
+              log.write("\n{} hits!".format(len(df1)))
+              
+              if len(df1) == 0:
+                  element = 'no'
+                  sid = 'no hits'
+                  tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid, sid, element, 'no'))
+              else:
+                  qlen = df1[0].get('query length', 0)
+                  log.write("\nQuery length: {}".format(qlen))
+              
+                  coverage_by_subject = {}
+              
+                  for row in df1:
+                      sid = row.get('subject id')
+                      coverage = row.get('% query coverage per subject')
+                      if coverage is None:
+                          continue  
+              
+                      if sid not in coverage_by_subject:
+                          coverage_by_subject[sid] = []
+                      coverage_by_subject[sid].append(float(coverage))  
+              
+                  avg_coverage = [
+                      {'subject id': sid, '% query coverage per subject': sum(values)/len(values)}
+                      for sid, values in coverage_by_subject.items()
+                  ]
+              
+                  avg_coverage_sorted = sorted(
+                      avg_coverage,
+                      key=lambda x: x['% query coverage per subject'],
+                      reverse=True
+                  )
+              
+                  i = 0
+                  nsid = len(avg_coverage_sorted)
+
+
               while i>-1 and i<nsid:
-                hit=[]
-                sid=df1['subject id'].tolist()[i]
-                cov=df1['% query coverage per subject'].tolist()[i]
+                hit = []
+                sid = avg_coverage_sorted[i]['subject id']  
+                cov = avg_coverage_sorted[i]['% query coverage per subject']
                 hit.append('\nSubject id: {}'.format(sid))
                 hit.append('% query coverage per subject: {}'.format(cov))
-                df2=df.loc[(df['subject id'] == sid)&(df['query id'] == qid)]
-                reads=sorted(joinlists(df2['q. start'].tolist(),df2['q. end'].tolist()))
-                contigs=assembly(reads)
+                
+                df2 = [row for row in df if row['subject id'] == sid and row['query id'] == qid]
+                
+                q_start_list = [row['q. start'] for row in df2]
+                q_end_list = [row['q. end'] for row in df2]
+                
+                reads = sorted(joinlists(q_start_list, q_end_list))
+                contigs = assembly(reads)
                 hit.append("Alignments: {}".format(str(contigs)))
+
                 if len(contigs)==1:
                   if cov>=param['mincov']:
                     estart,eend,elen=oneblock(contigs,qlen,param['enddist'])
