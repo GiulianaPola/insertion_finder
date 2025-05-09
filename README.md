@@ -1,140 +1,153 @@
 # insertion_finder - element insertion finder in a genome through a BLAST search
-(c) 2021. Arthur Gruber & Giuliana Pola
 
-Usage: *insertion_finder.py -q* sequence to search with *-run* 'local' *-d* database to BLAST against 
+Insertion_finder is a tool in Python that performs similarity searches against genomic nucleotide sequences and automatically analyzes the results, identifying occurrences without the presence of the element. By comparing the sequences with and without the element, it is possible to accurately determine the 5' and 3' insertion points. 
 
-*insertion_finder.py -q* query file *-run* 'web'
+<img src="insertion_finder_pipeline.jpg" alt="insertion_finder_pipeline" width="700" />
 
-*insertion_finder.py -q* query file *-run* 'local' *-d* database to BLAST against *-tab* BLASTn table file
+##   Instalation
 
-*insertion_finder.py -q* query file *-tab* BLASTn table file 
+Insertion_finder does not need to be installed. The user should only download the insertion_finder.py file.
 
-**Mandatory parameters:**
+## Requirements
 
-* *-q* (fasta or multifasta file) - Sequence to search with
 
-* *-run* (local|web) - Choice of running local or web BLAST search
+## Usage
+```
+python insertion_finder.py -q <query file> -run 'local' -d <database file> 
+python insertion_finder.py -q <query file> -run 'web'
+python insertion_finder.py -q <query file> -run 'local' -d <database file> -tab <BLASTn table file>
+python insertion_finder.py -q <query file> -tab <BLASTn table file> 
+```
+### Mandatory parameters:
+```
+-q <file name>      Sequence to search with (fasta or multifasta file)
+-run <local|web>    Choice of running local or web BLAST search
+-d <file name>      Database to BLAST against (multifasta file)
+```
 
-* *-d* (multifasta file) - Database to BLAST against
+### Optional parameters:
+```
+-conf <file name>   Configuration file
+-tab <file name>    BLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)(table file)
+-org <integer>      Taxid(s) to restrict the database of the BLASTn search
+-out <path|name>    Output directory
+-minlen <integer>   Minimum element's length in base pairs(bp) (default: 5000)
+-maxlen <integer>   Maximum element's length in base pairs(bp) (default: 50000)
+-mincov <integer>   Minimum % query coverage per subject (default: 30)
+-maxcov <integer>   Maximum % query coverage per subject (default: 90)
+-enddist <integer>  Maximum distance between block tip and query tip in base pairs(bp) (default: 50)
+-cpu <integer>      Number of threads to execute the blastn search (default: 10)
+-color <string>     Element RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)
+``` 
 
-**Optional parameters:**
-* *-tab* (table file) - BLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)
-* *-org* (int) - Taxid(s) to restrict the database of the BLASTn search
+## Contact
 
-* *-out* (path) - Output directory
-  
-* *-minlen* (int) - Minimum element's length in base pairs(bp) (default: 5000)
+To report bugs, to ask for help and to give any feedback, please contact Arthur Gruber (argruber@usp.br) or Giuliana L. Pola (giulianapola@usp.br).
 
-* *-maxlen* (int) - Maximum element's length in base pairs(bp) (default: 50000)
+## Versions
 
-* *-mincov* (int) - Minimum % query coverage per subject (default: 30)
+### 2.3.1
+fix: fixes data conversion in DataFrame to avoid errors with non-numeric values
+- Changes the conversion parameter in pandas from 'errors=ignore' to 'errors=coerce' in the function that prepares data from the BLASTn table, ensuring that invalid fields are treated as NaN and do not cause failures in subsequent operations.
 
-* *-maxcov* (int) - Maximum % query coverage per subject (default: 90)
+### 2.3.0
+- Addition of the routine that checks the BLAST table and, in case some sequence of the query file is missing, performs another BLAST search with the unprocessed or incomplete sequences and repeats the routine until no sequence is missing
+- Creation of the function missingquery(BLAST table file,query file in fasta format,id of the sequences that were processed) that gathers the content of the BLAST tables in a single file "blastn.tab", checks if the sequences of the query file are in the BLAST table, and if not, creates a new query file with the not found or incomplete sequences, and returns the id of the processed sequences
+- Parameter run (local|web) is now mandatory
+- Parameter d (database file) becomes mandatory if the run parameter is local
 
-* *-enddist* (int) - Maximum distance between block tip and query tip in base pairs(bp) (default: 50)
+### 2.2.5
+- The commands that perform the blast search have been placed in the blast(BLAST search parameters,query file,BLAST search output file) function to be used more than once within the code if needed
+- The commands that check if the output folder exists and if it does generate a new name were put in the function rename(number,path,'dir'|'file')
 
-* *-cpu* (int) - Number of threads to execute the blastn search (default: 10)
+### 2.2.4
+- Creation of file.log right after argument validation
+- Addition of screen messages displayed after argument validation in file.log
 
-* *-color* (int) - Element RGB color that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)
+### 2.2.3
+- Corrected message formatting "Invalid element, % query coverage less than valid coverage!" in file.log
+- Fix error repeating cases of "no valid hits" in elements.txt and file.log
 
-## 06/01/2022 (1.1.0)
-- adição dos campos “query file”, “database file” e “element length” no cabeçalho do “elements.txt” (arquivo que mostra as coordenadas e o tamanho dos elementos) para informar os parâmetros utilizados na busca
-- exibição do menu de ajuda quando o usuário não informa nenhum parâmetro
-- descarte do subject caso o número de blocos seja igual a 1
-- mudança do nome da saída de BLAST de “BLASTn_elements.txt” para “blastn.tab”
+### 2.2.2
+- Fix bug when getting the size of the query
 
-## 07/01/2022 (1.2.0)
-- adição do tipo de dados de cada parâmetro no menu ajuda
-- criação do diretório de saída caso ele não exista com o comando “os.mkdir”, quando o parâmetro “out” é informado 
-- criação dos arquivos “blastn.tab” e “elements.txt” dentro do diretório output com os comandos “open” e “os.path.join”
-- criação de um diretório para cada query com o comando “os.mkdir”
-- criação dos arquivos fasta e feature table do elemento dentro da pasta com o nome da query com os comandos “open” e “os.path.join”
-- alteração do nome dos parâmetros de “out”, “db”, “query” para “o”, “d” e “q”, respectivamente
+### 2.2.1
+- added BLAST search runtime to the files "file.log" and "elements.txt
+- modification of the message when the element is invalid to make it clearer: "Invalid element, smaller than valid size!" or "Invalid element, larger than valid size!"
 
-## 10/01/2022 (1.2.1)
-- validação do parâmetros
-- verificação da existência dos arquivos de query e database e do diretório output, parâmetros “query”, “db” e “out”
-- adição dos avisos no “file.log”
-- criação do “output_dir” caso o parâmetro “o” não for informado
-- adição da coluna “valid” na tabela “elements”
+### 2.2.0
+- added megablast option to BLASTn search (task = 'megablast')
+- bug fixing, problem with maxlen and minlen parameters
+- added -version parameter that shows the program version
 
-## 11/01/2022 (1.3.0)
-- correção da mensagem de erro “A value is trying to be set on a copy of a slice from a DataFrame”
-- correção da validação dos arquivos query e database usando a verificação do formato fasta a partir do comando “SeqIO.parse”
-- correção na extração da sequência do elemento a partir do arquivo query no formato fasta ⇒ busca dentro do arquivo query
-- adição dos dados do hit e do subject no “file.log”
-- adição da validação da busca BLASTn e aviso caso erro
-- adição do parâmetro “c”, a cor RGB do elemento na feature table
-- erro na validação do parâmetro “c”
+### 2.1.1
+- number of threads only appears in log and elements in local version (-run'local')
+- modification of org parameter for two or more organs (single quotes were missing inside double quotes in blast's entrez_query parameter)
 
-## 12/01/2022 (1.3.1)
-- correção da validação do parâmetro “c”
+### 2.1.0
+- o to out parameter changed
+- added and validated org, taxid parameter to restrict BLASTn search database
 
-## 14/01/2022 (1.4.0)
-- ordenação dos hits por % de cobertura por subject
-- alteração do nome dos parâmetros min e max para minlen e maxlen, tamanho mínimo e máximo do elemento
-- alteração do tamanho máximo padrão do elemento (max) para 50.000
-- adição do parâmetro enddist, distância máxima entre a extremidade do bloco e da query para que o elemento seja aceito quando tiver apenas 1 bloco
-- adição dos parâmetros mincov e maxcov, % mínima e máxima de cobertura da query
-- validação do alinhamento para 1 bloco
-- validação da distância máxima entre o bloco e a query quando há só 1 bloco
-- criação da pasta nome-de-pasta_2 quando a pasta informada no parâmetro out já existir
-- alteração do tamanho mínimo padrão (minlen) para 4000
-- adição do parâmetro tab, tabela com resultado da busca BLASTn
+### 2.0.1
+- bug fixed (query ARBZ01000001_1 web version)
 
-## 15/01/2022 (1.5.0)
-- validação do parâmetro tab
-- alteração da distância máxima (enddist) padrão entre o bloco e a query para 50
-- adição e validação do parâmetro cpu, número de processadores para executar o blast 
-- alteração do parâmetro c para color ⇒ ambiguidade com o parâmetro cpu
-- alteração na validação dos parâmetros mincov e maxcov ⇒ entre 0 e 100 e diferentes entre si
-- alteração na validação dos parâmetros minlen e maxlen ⇒ maiores que 0 e diferentes entre si
-- adição do tempo de duração e parâmetros usados no cabeçalho do file.log e elements.txt
+### 2.0.0
+- run parameter added with local or web options
+- error: choose subject twice (query ARBZ01000001_1 web version)
 
-## 21/01/2022 (1.5.1)
-- correção do erro "IndexError: list index out of range"
+### 1.5.1
+- fix "IndexError: list index out of range" error
 
-## 26/01/2022 (2.0.0)
-- adição do parâmetro run com as opções local ou web
-- erro: escolha de subject duas vezes (query ARBZ01000001_1 versão web)
+### 1.5.0
+- tab parameter validation
+- change default maximum distance (enddist) between block and query to 50
+- added and validated parameter cpu, number of processors to blast 
+- changed parameter c to color ⇒ ambiguity with parameter cpu
+- change in the validation of the parameters mincov and maxcov ⇒ between 0 and 100 and different from each other
+- change in the validation of minlen and maxlen parameters ⇒ greater than 0 and different from each other
+- addition of the duration time and parameters used in the file.log and elements.txt header
 
-## 29/01/2022 (2.0.1)
-- erro corrigido (query ARBZ01000001_1 versão web)
+### 1.4.0
+- sort hits by % coverage per subject
+- changed name of min and max parameters to minlen and maxlen, minimum and maximum element size
+- change default max element size (max) to 50,000
+- added parameter enddist, maximum distance between the end of the block and the query so that the element is accepted when it has only 1 block
+- addition of the parameters mincov and maxcov, minimum and maximum % of query coverage
+- validation of the alignment for 1 block
+- validation of the maximum distance between the block and the query when there is only 1 block
+- creation of folder-folder-name_2 when the folder specified in parameter out already exists
+- change of default minimum size (minlen) to 4000
+- addition of parameter tab, table with BLASTn search results
 
-## 30/01/2022 (2.1.0)
-- mudança do parâmetro o to out
-- adição e validação do parâmetro org, taxid para restringir o database da busca BLASTn
+### 1.3.1
+- correction of parameter "c" validation
 
-## 31/01/2022 (2.1.1)
-- number of threads só aparece no log e no elements na versão local (-run’local’)
-- modificação do parâmetro org para dois ou mais organismos (faltava aspas simples dentro das aspas duplas no parâmetro entrez_query do blast)
+### 1.3.0
+- fixed error message "A value is trying to be set on a copy of a slice from a DataFrame"
+- fix validating query and database files using fasta format check from "SeqIO.parse" command
+- fix extracting the element sequence from the query file in fasta format ⇒ search within the query file
+- add hit and subject data in "file.log
+- addition of the BLASTn search validation and warning in case of error
+- add parameter "c", the RGB color of the element in the feature table
+- error in the validation of parameter "c"
 
-## 01/02/2022 (2.2.0)
-- adição da opção megablast na busca BLASTn (task = ’megablast’)
-- correção de erro, problema nos parâmetros maxlen e minlen
-- adição do parâmetro -version que mostra qual a versão do programa
+### 1.2.1
+- parameters validation
+- verification of the existence of the query and database files and the output directory, parameters "query", "db" and "out
+- addition of the warnings in the "file.log
+- creation of "output_dir" if the parameter "o" is not informed
+- addition of the column "valid" in the table "elements"
 
-## 03/02/2022 (2.2.1)
-- adição do tempo de execução da busca BLAST no arquivos “file.log” e “elements.txt”
-- modificação da mensagem quando o elemento é inválido para ficar mais claro: “Invalid element, smaller than valid size!” ou “Invalid element, larger than valid size!"
+### 1.2.0
+- adding the data type of each parameter in the help menu
+- creation of the output directory if it doesn't exist with the command "os.mkdir", when the parameter "out" is entered 
+- creation of the files "blastn.tab" and "elements.txt" inside the output directory with the "open" and "os.path.join" commands
+- creation of a directory for each query with the "os.mkdir" command
+- creating the element's fasta and feature table files inside the folder with the query name with the commands "open" and "os.path.join
+- changing the parameter names from "out", "db", "query" to "o", "d" and "q", respectively
 
-## 05/02/2022 (2.2.2)
-- Correção de bug na hora de pegar o tamanho da query
-
-## 13/02/2022 (2.2.3)
-- Correção na formatação da mensagem “Invalid element,  % query coverage less than valid coverage!” no file.log
-- Correção dos erro de repetição dos casos de “no valid hits” no elements.txt e no file.log
-
-## 14/02/2022 (2.2.4)
-- Criação do file.log logo após a validação dos argumentos
-- Adição das mensagens da tela exibidas depois da validação dos argumentos no file.log
-
-## 15/02/2022 (2.2.5)
-- Os comandos que executam a busca blast foram colocados na função blast(parâmetros da pesquisa BLAST,arquivo query,arquivo de saida da busca BLAST) para serem utilizados mais de uma vez dentro do código, caso necessário
-- Os comandos que verificam se a pasta de saida existe e caso exista gera um novo nome foram colocados na função rename(número,caminho,’dir’|’file’)
-
-## 23/02/2022 (2.3.0)
-- Adição da rotina que confere a tabela BLAST e, caso alguma sequência do arquivo query esteja faltando, realiza outra busca BLAST com as sequências não processadas ou incompletas e repete a rotina até que não falte nenhuma sequência
-- Criação da função missingquery(arquivo tabela BLAST,arquivo query no formato fasta,id das sequências que foram processadas) que junta o conteúdo das tabelas BLAST em um único arquivo “blastn.tab”, verifica se as sequências do arquivo query estão na tabela BLAST e, caso não estejam, cria um novo arquivo de query com as sequências não encontradas ou incompletas, e retorna o id das sequências processadas
-- Parâmetro run (local|web) tornou-se obrigatório
-- Parâmetro d (arquivo database) torna-se obrigatório caso o parâmetro run seja local
+### 1.1.0
+- adding the fields "query file", "database file" and "element length" in the header of "elements.txt" (file that shows the coordinates and size of elements) to inform the parameters used in the search
+- displaying the help menu when the user does not inform any parameter
+- discarding the subject if the number of blocks is equal to 1
+- changing the name of the BLAST output from "BLASTn_elements.txt" to "blastn.tab

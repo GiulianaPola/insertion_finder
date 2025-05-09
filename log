@@ -1,0 +1,262 @@
+commit 81b0a518fbd8625de0e19433e68e22fad6eea117
+Author: Giuliana L Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Fri May 9 03:17:18 2025 +0000
+
+    2.3.1 - fix: fixes data conversion in DataFrame to avoid errors with non-numeric values
+    
+    Changes the conversion parameter in pandas from 'errors=ignore' to 'errors=coerce' in the function that prepares data from the BLASTn table, ensuring that invalid fields are treated as NaN and do not cause failures in subsequent operations.
+
+commit 562199d4cf788b130c01061484cc0e8b84b08e4f
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Thu Feb 24 04:27:48 2022 +0000
+
+    (2.3.0)
+    - Adição da rotina que confere a tabela BLAST e, caso alguma sequência do arquivo query esteja faltando, realiza outra busca BLAST com as sequências não processadas ou incompletas e repete a rotina até que não falte nenhuma sequência
+    - Criação da função missingquery(arquivo tabela BLAST,arquivo query no formato fasta,id das sequências que foram processadas) que junta o conteúdo das tabelas BLAST em um único arquivo “blastn.tab”, verifica se as sequências do arquivo query estão na tabela BLAST e, caso não estejam, cria um novo arquivo de query com as sequências não encontradas ou incompletas, e retorna o id das sequências processadas
+    - Parâmetro run (local|web) tornou-se obrigatório
+    - Parâmetro d (arquivo database) torna-se obrigatório caso o parâmetro run seja local
+
+commit a4f132e5af65c4735110046c8885f35ab23f3e2d
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Wed Feb 16 02:11:30 2022 +0000
+
+    (2.2.5)
+    - Os comandos que executam a busca blast foram colocados na função blast(<parâmetros da pesquisa BLAST>,<arquivo query>,<arquivo de saida da busca BLAST>)para serem utilizados mais de uma vez dentro do código, caso necessário
+    - Os comandos que verificam se a pasta de saida existe e caso exista gera um novo nome foram colocados na função rename(<número>,<caminho>,<’dir’|’file’>)
+
+commit c48945059b4e81e678dd97a576e8c99ba9ff90ba
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Mon Feb 14 04:28:34 2022 +0000
+
+    (2.2.3)
+    - Correção na formatação da mensagem “Invalid element,  % query coverage less than valid coverage!” no file.log
+    - Correção dos erro de repetição dos casos de “no valid hits” no elements.txt e no file.log
+
+commit 5041727912e097022058b563bc1b1531958ed7e2
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Sat Feb 5 22:54:21 2022 +0000
+
+    (2.2.2)
+    - Correção de bug na hora de pegar o tamanho da query
+
+commit c102983a200788e9d6370ab6b0f5ccbd93b8a94d
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Sat Feb 5 22:48:18 2022 +0000
+
+    2.2.2
+    - Correção de bug na hora de pegar o tamanho da query
+
+commit 03c499e2264112ce1c235e3bb90d7310af58a64f
+Merge: 3540cc1 ece40c9
+Author: GiulianaPola <>
+Date:   Sat Feb 5 22:47:29 2022 +0000
+
+    Merge remote-tracking branch 'origin/main' into main
+
+commit 3540cc127245f2ed65db73aad622d7edbee1ae42
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Fri Feb 4 04:12:48 2022 +0000
+
+    2.2.1
+    - adição do tempo de execução da busca BLAST no arquivos “file.log” e “elements.txt”
+    git commit --amend -m 2.2.1
+
+commit ece40c97f1d27ca711fb4f19399230186fa4f789
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Fri Feb 4 04:12:48 2022 +0000
+
+    2.0.0
+    - adição do parâmetro run com as opções local ou web
+    - erro: escolha de subject duas vezes (query ARBZ01000001_1 versão web)
+
+commit 0d35461b0888f4676a2522d26099337d2b89afaf
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Wed Feb 2 04:41:30 2022 +0000
+
+    01/02/2022 (2.2.0)
+    - adição da opção megablast na busca BLASTn (task = ’megablast’)
+    - correção de erro, problema nos parâmetros maxlen e minlen
+    - adição do parâmetro -version que mostra qual a versão do programa
+
+commit 05c7a75143f7f8b092c2256d680170dd14d65f42
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Wed Feb 2 04:15:08 2022 +0000
+
+    (2.2.0)
+    - adição da opção megablast na busca BLASTn (task = ’megablast’)
+    - correção de erro, problema nos parâmetros maxlen e minlen
+    - adição do parâmetro -version que mostra qual a versão do programa
+
+commit eea1ad57455cbf21829bd8371d4deba7fa8850ea
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Wed Feb 2 04:02:39 2022 +0000
+
+    2.2.0
+    - adição da opção megablast na busca BLASTn (task = ’megablast’)
+    - correção de erro, problema nos parâmetros maxlen e minlen
+    - adição do parâmetro version que mostra qual a versão do programa
+
+commit f271da28bbea61d773a2b0cb4f8c382c3ed2167d
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Tue Feb 1 04:15:54 2022 +0000
+
+    - number of threads só aparece no log e no elements na versão local (-run’local’)
+    - modificação do parâmetro org para dois ou mais organismos (faltava aspas simples dentro das aspas duplas no parâmetro entrez_query do blast)
+
+commit 7a43c7529d962a58cc0e87b3368223b7d68d19ec
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Mon Jan 31 03:55:02 2022 +0000
+
+    Mudança do parâmetro o to out
+    Adição e validação do parâmetro org, taxid para restringir o database da busca BLASTn
+
+commit 2761f0512d7b75750f8f87e00a58d8635beddb49
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Sun Jan 30 03:52:05 2022 +0000
+
+    erro corrigido (query ARBZ01000001_1 versão web)
+
+commit c5c0e8d9d339396eafcf8bf22b321ffbbfdf49a3
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Thu Jan 27 02:29:26 2022 +0000
+
+    - adição do parâmetro run com as opções local ou web
+    - erro: escolha de subject duas vezes (query ARBZ01000001_1 versão web)
+
+commit 5571b0e2bc77892925ac1c7c03e499acd80cb04e
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Fri Jan 21 22:26:36 2022 +0000
+
+    correção do erro "IndexError: list index out of range"
+
+commit e871c8b0656c0404347a971f9e0643096fe867b7
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Sun Jan 16 04:33:46 2022 +0000
+
+    Validação do parâmetro tab
+    
+    Alteração da distância máxima (enddist) padrão entre o bloco e a query para 50
+    Adição e validação do parâmetro cpu, número de processadores para executar o blast
+    
+    Alteração do parâmetro c para color ⇒ ambiguidade com o parâmetro cpu
+    Alteração na validação dos parâmetros mincov e maxcov ⇒ entre 0 e 100 e diferentes entre si
+    
+    Alteração na validação dos parâmetros minlen e maxlen ⇒ maiores que 0 e diferentes entre si
+    
+    Adição do tempo de duração e parâmetros usados no cabeçalho do file.log e elements.txt
+
+commit 4bff97caecf45ad64c44dcfd5404679d06b84a26
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Sat Jan 15 06:38:09 2022 +0000
+
+    Ordenação dos hits por % de cobertura por subject
+    Alteração do nome dos parâmetros min e max para minlen e maxlen, tamanho mínimo e máximo do elemento
+    Alteração do tamanho máximo padrão do elemento (max) para 50.000
+    
+    Adição do parâmetro enddist, distância máxima entre a extremidade do bloco e da query para que o elemento seja aceito quando tiver apenas 1 bloco
+    
+    Adição dos parâmetros mincov e maxcov, % mínima e máxima de cobertura da query
+    
+    Validação do alinhamento para 1 bloco
+    Validação da distância máxima entre o bloco e a query quando há só 1 bloco
+    
+    Criação da pasta nome-de-pasta_2 quando a pasta informada no parâmetro out já existir
+    
+    Alteração do tamanho mínimo padrão (minlen) para 4000
+    Adição do parâmetro tab, tabela com resultado da busca BLASTn
+
+commit 7e14d0441cc8829d78bb99f5468f5ec4480dffe7
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Wed Jan 12 19:11:29 2022 +0000
+
+    Correção da validação do parâmetro “c”
+
+commit 62213f8f010fd65356bd6c4d60f12ddf5e7c1ff5
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Wed Jan 12 03:29:26 2022 +0000
+
+    Correção da validação dos arquivos query e database usando a verificação do formato fasta a partir do comando “SeqIO.parse”
+    Correção na extração da sequência do elemento a partir do arquivo query no formato fasta ⇒ busca dentro do arquivo query
+    Adição dos dados do hit e do subject no “file.log”
+    Adição da validação da busca BLASTn e aviso caso erro
+    Adição do parâmetro “c”, a cor RGB do elemento na feature table
+    Erro na validação do parâmetro “c”
+
+commit 61c6eca82446ea6ead21aa87cdb3d142c4124da0
+Author: GiulianaPola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Tue Jan 11 19:44:48 2022 -0300
+
+    Update README.md
+
+commit 3767e21869a85d1d37de62b793aabae6f61656ab
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Tue Jan 11 22:43:26 2022 +0000
+
+    Correção da mensagem de erro “A value is trying to be set on a copy of a slice from a DataFrame”
+
+commit 1ed493dab47ae64347916709930383490e0c7534
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Tue Jan 11 03:00:50 2022 +0000
+
+    atualização readme
+
+commit 5c5641980374c2c7e8f1fde26e662e70cc925864
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Tue Jan 11 02:59:10 2022 +0000
+
+    - validação do parâmetros
+    - verificação da existência dos arquivos de query e database e do diretório output, parâmetros “query”, “db” e “out”
+    - adição dos avisos no “file.log”
+    - criação do “output_dir” caso o parâmetro “o” não for informado
+    - adição da coluna “valid” na tabela “elements”
+
+commit acad60b782fe077313844961e42cce81322a0505
+Author: GiulianaPola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Fri Jan 7 17:18:10 2022 -0300
+
+    Update insertion_finder.py
+
+commit aacbabdaa9c21d282880dec5a38fcef01b720aa2
+Author: GiulianaPola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Fri Jan 7 17:17:04 2022 -0300
+
+    Update README.md
+
+commit 7368d6750c05119028b47bacb1fd172ba09fb066
+Author: GiulianaPola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Fri Jan 7 17:05:02 2022 -0300
+
+    Create README.md
+
+commit 9fbe8e46e25896155eff6d45c3829831c1485f21
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Fri Jan 7 19:53:47 2022 +0000
+
+    - adição do tipo de dados de cada parâmetro no menu ajuda
+    - verificação da existência dos arquivos de query e database e do diretório output, parâmetros “query”, “db” e “out”
+    - criação do diretório de saída caso ele não exista com o comando “os.mkdir”, quando o parâmetro “out” é informado
+    - criação dos arquivos “blastn.tab” e “elements.txt” dentro do diretório output com os comandos “open” e “os.path.join”
+    - criação de um diretório para cada query com o comando “os.mkdir”
+    - criação dos arquivos fasta e feature table do elemento dentro da pasta com o nome da query com os comandos “open” e “os.path.join”
+    - alteração do nome dos parâmetros de “out”, “db”, “query” para “o”, “d” e “q”, respectivamente
+
+commit c7a4b50cb36f4a16184fdbaaf0ce563638b92319
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Thu Jan 6 21:38:32 2022 +0000
+
+    - exibição do menu de ajuda quando o usuário não informa nenhum parâmetro
+    - descarte do subject caso o número de blocos seja igual a 1
+    - mudança do nome da saída de BLAST de “BLASTn_elements.txt” para “blastn.tab”
+
+commit 5137e4d7b510ff4157db31744d6b0e4accdd0145
+Author: Giuliana Pola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Thu Jan 6 19:07:41 2022 +0000
+
+    adição no cabeçalho do “elements.txt” (arquivo que mostra as coordenadas e o tamanho dos elementos)
+    - query file, database file, element length ⇒ saber os parâmetros da busca
+
+commit e81dc65ac37d8aa5a9c416694205d9024b34ccfd
+Author: GiulianaPola <92754890+GiulianaPola@users.noreply.github.com>
+Date:   Thu Jan 6 18:17:55 2022 +0000
+
+    Initial commit
