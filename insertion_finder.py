@@ -12,12 +12,20 @@ warnings.showwarning = warn_with_traceback
 import argparse
 import sys
 from datetime import datetime
-start_time = datetime.now()
 import os
 import re
+from datetime import datetime
+from Bio.Blast.Applications import NcbiblastnCommandline
+from Bio import SeqIO
+import os
+
+start_time = datetime.now()
+call=os.path.abspath(os.getcwd())
+
+
 param=dict()
 
-version="2.4.0"
+version="2.5.0"
 
 help = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
 help = help + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
@@ -378,7 +386,7 @@ def validateargs(args):
 def blast(param, q,blast_time='',seqs=[]):
   tab=os.path.join(param["out"], 'blastn2.tab')
   blast_start = datetime.now()
-  from Bio.Blast.Applications import NcbiblastnCommandline
+  
   if param['run']=='local':
     print("Starting BLAST search...")
     comando_blastn = NcbiblastnCommandline(query=q, db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend evalue'", out=tab,num_threads=param['cpu'])
@@ -444,7 +452,7 @@ def missingquery(tab,qry,seqs=[]):
       print("BLAST search missing query: {}!".format(misseqs[0]))
     else:
       print("BLAST search missing queries: {}!".format(", ".join(misseqs)))
-    newqfile=(os.path.join(param["out"], 'newquery.fasta'),'w')
+    newqfile=open(os.path.join(param["out"], 'newquery.fasta'),'w')
     newqfile.write(newq)
     newqfile.close()
     if os.path.isfile(os.path.join(param["out"], 'blastn.tab')):
@@ -531,8 +539,6 @@ elif args.help == True:
 elif args.version == True:
     print(version)
 else:
-  from Bio import SeqIO
-  import os
   log=[]
   elements=[]
   valid,param=validateargs(args)
@@ -543,10 +549,40 @@ else:
     print('Valid arguments!')
     try:
       log=open(os.path.join(param["out"], 'file.log'),'w')
-      log.write('insertion_finder v{}'.format(version))
-    except:
-      print('Log file was not created!')
+      log.write('insertion_finder v{}\n'.format(version))
+    except Exception as error:
+      print('Log file was not created: {}'.format(error))
     else:  
+      log.write('(c) 2021. Giuliana Pola & Arthur Gruber\n')
+      log.write('For more information access: https://github.com/GiulianaPola/insertion_finder')
+      log.write('\nStart time: {}\n'.format(start_time.strftime("%d/%m/%Y, %H:%M:%S")))
+      log.write('\nWorking directory: {}\n'.format(call))
+      log.write('\nCommand line: {}\n'.format(' '.join(sys.argv)))
+      user=""
+      try:
+        user=os.getlogin()
+      except Exception as e:
+        try:
+          user=os.environ['LOGNAME']
+        except Exception as e:
+          try:
+            user=os.environ['USER']
+          except Exception as e:
+            pass
+          else:
+            pass
+        else:
+          pass
+      else:
+        pass
+      if not user=="":
+        log.write('\nUser: {}\n'.format(user))
+      log.write('\nParameters:\n')
+      for arg in vars(args):
+          value = getattr(args, arg)
+          if value is not None and value is not False:
+              log.write("{}={}\n".format(arg,value))
+      log.flush()
       qseqs=open(param['q'], "r").read()
       if args.tab==None:
         log.write('\nStarting BLASTn search...')
@@ -672,119 +708,119 @@ else:
                   nsid = len(avg_coverage_sorted)
 
 
-              while i>-1 and i<nsid:
-                hit = []
-                sid = avg_coverage_sorted[i]['subject id']  
-                cov = avg_coverage_sorted[i]['% query coverage per subject']
-                hit.append('\nSubject id: {}'.format(sid))
-                hit.append('% query coverage per subject: {}'.format(cov))
-                
-                df2 = [row for row in df if row['subject id'] == sid and row['query id'] == qid]
-                
-                q_start_list = [row['q. start'] for row in df2]
-                q_end_list = [row['q. end'] for row in df2]
-                
-                reads = sorted(joinlists(q_start_list, q_end_list))
-                contigs = assembly(reads)
-                hit.append("Alignments: {}".format(str(contigs)))
-
-                if len(contigs)==1:
-                  if cov>=param['mincov']:
-                    estart,eend,elen=oneblock(contigs,qlen,param['enddist'])
-                    #print(estart,eend,elen)
-                    if estart==0 and i==nsid-1:
-                      log.write("\nInvalid element, block distance greater than the maximum distance on both sides!")
-                      log.write("\nNo valid hits!")
-                      cont+=1
-                      tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,'no valid hits','no','no'))
-                    if estart==-1 and i==nsid-1:
-                      log.write("\nInvalid element, block distance smaller than the maximum distance on both sides!")
-                      log.write("\nNo valid hits!")
-                      cont+=1
-                      tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,'no valid hits','no','no'))
-                    if estart>0:
-                      log.write('\n'.join(str(v) for v in hit))
-                      i=-1      
-                      cont+=1            
-                      log.write("\nElement coodinates: {} - {}".format(estart,eend))
-                      log.write("\nElement length: {}".format(elen))
-                      if elen>=param['minlen'] and elen<=param['maxlen']:
-                        log.write("\nValid element!")
-                        econt+=1
-                        os.mkdir(os.path.join(param["out"], qid))
-                        tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'yes'))
-                        try:
-                          ft=open(os.path.join(param["out"], qid, str(qid+'_element.gb')),'w')
-                          ft.write("     misc_feature    {0}..{1}\n".format(estart,eend))
-                          ft.write("                     /label=element\n")
-                          ft.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
-                          ft.close()
-                        except:
-                          log.write("\nElement's feature table was't writen!")
+                  while i>-1 and i<nsid:
+                    hit = []
+                    sid = avg_coverage_sorted[i]['subject id']  
+                    cov = avg_coverage_sorted[i]['% query coverage per subject']
+                    hit.append('\nSubject id: {}'.format(sid))
+                    hit.append('% query coverage per subject: {}'.format(cov))
+                    
+                    df2 = [row for row in df if row['subject id'] == sid and row['query id'] == qid]
+                    
+                    q_start_list = [row['q. start'] for row in df2]
+                    q_end_list = [row['q. end'] for row in df2]
+                    
+                    reads = sorted(joinlists(q_start_list, q_end_list))
+                    contigs = assembly(reads)
+                    hit.append("Alignments: {}".format(str(contigs)))
+    
+                    if len(contigs)==1:
+                      if cov>=param['mincov']:
+                        estart,eend,elen=oneblock(contigs,qlen,param['enddist'])
+                        #print(estart,eend,elen)
+                        if estart==0 and i==nsid-1:
+                          log.write("\nInvalid element, block distance greater than the maximum distance on both sides!")
+                          log.write("\nNo valid hits!")
+                          cont+=1
+                          tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,'no valid hits','no','no'))
+                        if estart==-1 and i==nsid-1:
+                          log.write("\nInvalid element, block distance smaller than the maximum distance on both sides!")
+                          log.write("\nNo valid hits!")
+                          cont+=1
+                          tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,'no valid hits','no','no'))
+                        if estart>0:
+                          log.write('\n'.join(str(v) for v in hit))
+                          i=-1      
+                          cont+=1            
+                          log.write("\nElement coodinates: {} - {}".format(estart,eend))
+                          log.write("\nElement length: {}".format(elen))
+                          if elen>=param['minlen'] and elen<=param['maxlen']:
+                            log.write("\nValid element!")
+                            econt+=1
+                            os.mkdir(os.path.join(param["out"], qid))
+                            tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'yes'))
+                            try:
+                              ft=open(os.path.join(param["out"], qid, str(qid+'_element.gb')),'w')
+                              ft.write("     misc_feature    {0}..{1}\n".format(estart,eend))
+                              ft.write("                     /label=element\n")
+                              ft.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
+                              ft.close()
+                            except:
+                              log.write("\nElement's feature table was't writen!")
+                            else:
+                              log.write("\nWriting element's feature table...")
+                            try:
+                              fasta=open(os.path.join(param["out"], qid, str(qid+'_element.fasta')),'w')
+                              fasta.write(">{0} - element - {1}-{2}\n".format(qid,estart,eend))
+                              fasta.write(extract(qseqs, qid, estart, eend))
+                              fasta.close()
+                            except:
+                              log.write("\nElement's fasta was't writen!")
+                            else:
+                              log.write("\nWriting element's fasta...")
+                          else:
+                            if elen<=param['minlen']:
+                              log.write("\nInvalid element, smaller than valid size!")
+                            if elen>=param['maxlen']:
+                              log.write("\nInvalid element, larger than valid size!")
+                            tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'no'))
+                      elif cov<=param['mincov']:
+                        log.write('\n'.join(str(v) for v in hit))
+                        log.write('\nInvalid element, % query coverage less than valid coverage!')
+                        tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,sid,'no','no'))
+                        i=-1
+                        cont+=1
+                    elif len(contigs)>1:
+                      if cov<=param['maxcov']:
+                        start,end=splitlist(contigs)
+                        estart,eend,elen=findelement(start,end)
+                        log.write('\n'.join(str(v) for v in hit))
+                        log.write("\nElement coodinates: {} - {}".format(estart,eend))
+                        log.write("\nElement length: {}".format(elen))
+                        i=-1
+                        cont+=1
+                        if elen>=param['minlen'] and elen<=param['maxlen']:
+                          log.write("\nValid element!")
+                          econt+=1
+                          os.mkdir(os.path.join(param["out"], qid))
+                          tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'yes'))
+                          try:
+                            log.write("\nWriting element's feature table...")
+                            ft=open(os.path.join(param["out"], qid, str(qid+'_element.gb')),'w')
+                            ft.write("     misc_feature    {0}..{1}\n".format(estart,eend))
+                            ft.write("                     /label=element\n")
+                            ft.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
+                            ft.close()
+                          except:
+                            log.write("\nElement's feature table was't writen!")
+                          try:
+                            log.write("\nWriting element's fasta...")
+                            fasta=open(os.path.join(param["out"], qid, str(qid+'_element.fasta')),'w')
+                            fasta.write(">{0} - element - {1}-{2}\n".format(qid,estart,eend))
+                            fasta.write(extract(qseqs, qid, estart, eend))
+                            fasta.close()
+                          except:
+                            log.write("\nElement's fasta was't writen!")
                         else:
-                          log.write("\nWriting element's feature table...")
-                        try:
-                          fasta=open(os.path.join(param["out"], qid, str(qid+'_element.fasta')),'w')
-                          fasta.write(">{0} - element - {1}-{2}\n".format(qid,estart,eend))
-                          fasta.write(extract(qseqs, qid, estart, eend))
-                          fasta.close()
-                        except:
-                          log.write("\nElement's fasta was't writen!")
-                        else:
-                          log.write("\nWriting element's fasta...")
-                      else:
-                        if elen<=param['minlen']:
-                          log.write("\nInvalid element, smaller than valid size!")
-                        if elen>=param['maxlen']:
-                          log.write("\nInvalid element, larger than valid size!")
-                        tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'no'))
-                  elif cov<=param['mincov']:
-                    log.write('\n'.join(str(v) for v in hit))
-                    log.write('\nInvalid element, % query coverage less than valid coverage!')
-                    tabular.write("\n{0}\t{1}\t{2}\t\t\t\t{3}".format(qid,sid,'no','no'))
-                    i=-1
-                    cont+=1
-                elif len(contigs)>1:
-                  if cov<=param['maxcov']:
-                    start,end=splitlist(contigs)
-                    estart,eend,elen=findelement(start,end)
-                    log.write('\n'.join(str(v) for v in hit))
-                    log.write("\nElement coodinates: {} - {}".format(estart,eend))
-                    log.write("\nElement length: {}".format(elen))
-                    i=-1
-                    cont+=1
-                    if elen>=param['minlen'] and elen<=param['maxlen']:
-                      log.write("\nValid element!")
-                      econt+=1
-                      os.mkdir(os.path.join(param["out"], qid))
-                      tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'yes'))
-                      try:
-                        log.write("\nWriting element's feature table...")
-                        ft=open(os.path.join(param["out"], qid, str(qid+'_element.gb')),'w')
-                        ft.write("     misc_feature    {0}..{1}\n".format(estart,eend))
-                        ft.write("                     /label=element\n")
-                        ft.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
-                        ft.close()
-                      except:
-                        log.write("\nElement's feature table was't writen!")
-                      try:
-                        log.write("\nWriting element's fasta...")
-                        fasta=open(os.path.join(param["out"], qid, str(qid+'_element.fasta')),'w')
-                        fasta.write(">{0} - element - {1}-{2}\n".format(qid,estart,eend))
-                        fasta.write(extract(qseqs, qid, estart, eend))
-                        fasta.close()
-                      except:
-                        log.write("\nElement's fasta was't writen!")
-                    else:
-                      cont+=1
-                      i=-1
-                      if elen<=param['minlen']:
-                        log.write("\nInvalid element, smaller than valid size!")
-                      if elen>=param['maxlen']:
-                        log.write("\nInvalid element, larger than valid size!")
-                      tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'no'))
-                if not i==-1:
-                  i+=1
+                          cont+=1
+                          i=-1
+                          if elen<=param['minlen']:
+                            log.write("\nInvalid element, smaller than valid size!")
+                          if elen>=param['maxlen']:
+                            log.write("\nInvalid element, larger than valid size!")
+                          tabular.write("\n{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}".format(qid,sid,'yes',estart,eend,elen,'no'))
+                    if not i==-1:
+                      i+=1
           tabular.write('\n\nProcessed {} queries with {} valid elements'.format(len(param['qid']),econt))
           log.write('\n\nProcessed {} queries with {} valid elements'.format(len(param['qid']),econt))
           print('Processed {} queries with {} valid elements'.format(len(param['qid']),econt))
