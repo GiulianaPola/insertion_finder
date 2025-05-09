@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import traceback
 import warnings
 def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
@@ -17,29 +17,33 @@ import os
 import re
 param=dict()
 
-version="2.3.0"
+start_time = datetime.now()
+call=os.path.abspath(os.getcwd())
 
-ajuda = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
-ajuda = ajuda + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
-ajuda = ajuda + 'Usage: insertion_finder.py -q <query file> -d <database file> -run local\n'
-ajuda = ajuda + '\tinsertion_finder.py -q <query file> -d <database file> -run local -tab <BLASTn table file>\n'
-ajuda = ajuda + '\tinsertion_finder.py -q <query file> -run web -tab <BLASTn table file>\n'
-ajuda = ajuda + '\tinsertion_finder.py -q <query file> -run web\n'
-ajuda = ajuda + '\nMandatory parameters:\n'
-ajuda = ajuda + '-q <fasta or multifasta file>\tSequence to search with\n'
-ajuda = ajuda + '-d <multifasta file>\tDatabase to BLAST against\n'
-ajuda = ajuda + '-run <local|web>\tchoice of running local or web BLAST search\n'
-ajuda = ajuda + '\nOptional parameters:\n'
-ajuda = ajuda + '-tab <table file>\tBLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)\n'
-ajuda = ajuda + '-org <int>\tTaxid(s) to restrict the database of the BLASTn search\n'
-ajuda = ajuda + "-out <path>\tOutput directory (default: output_dir1)\n"
-ajuda = ajuda + "-enddist <int>\tMaximum distance between block tip and query tip in base pairs(bp) (default: 50)\n"
-ajuda = ajuda + "-minlen <int>\tMinimum element's length in base pairs(bp) (default: 5000)\n"
-ajuda = ajuda + "-maxlen <int>\tMaximum element's length in base pairs(bp) (default: 50000)\n"
-ajuda = ajuda + "-mincov <int>\tMinimum % query coverage per subject (default: 30)\n"
-ajuda = ajuda + "-maxcov <int>\tMaximum % query coverage per subject (default: 90)\n"
-ajuda = ajuda + "-cpu <int>\tNumber of threads to execute the blastn search (default: 18)\n"
-ajuda = ajuda + "-color <int>\tThe RGB color of the element that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)"
+version="2.3.1"
+
+help = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
+help = help + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
+help = help + 'For the latest version acess: https://github.com/GiulianaPola/insertion_finder\n'
+help = help + 'Usage: insertion_finder.py -q <query file> -d <database file> -run local\n'
+help = help + '\tinsertion_finder.py -q <query file> -d <database file> -run local -tab <BLASTn table file>\n'
+help = help + '\tinsertion_finder.py -q <query file> -run web -tab <BLASTn table file>\n'
+help = help + '\tinsertion_finder.py -q <query file> -run web\n'
+help = help + '\nMandatory parameters:\n'
+help = help + '-q <fasta or multifasta file>\tSequence to search with\n'
+help = help + '-d <multifasta file>\tDatabase to BLAST against\n'
+help = help + '-run <local|web>\tchoice of running local or web BLAST search\n'
+help = help + '\nOptional parameters:\n'
+help = help + '-tab <table file>\tBLASTn search result table (fields: qseqid,sseqid,qcovs,qlen,slen,qstart,qend)\n'
+help = help + '-org <int>\tTaxid(s) to restrict the database of the BLASTn search\n'
+help = help + "-out <path>\tOutput directory (default: output_dir1)\n"
+help = help + "-enddist <int>\tMaximum distance between block tip and query tip in base pairs(bp) (default: 50)\n"
+help = help + "-minlen <int>\tMinimum element's length in base pairs(bp) (default: 5000)\n"
+help = help + "-maxlen <int>\tMaximum element's length in base pairs(bp) (default: 50000)\n"
+help = help + "-mincov <int>\tMinimum % query coverage per subject (default: 30)\n"
+help = help + "-maxcov <int>\tMaximum % query coverage per subject (default: 90)\n"
+help = help + "-cpu <int>\tNumber of threads to execute the blastn search (default: 18)\n"
+help = help + "-color <int>\tThe RGB color of the element that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)"
 
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-q')
@@ -70,11 +74,11 @@ def rename(i,name,typ):
     path=os.path.split(name)[0]
     name=os.path.split(name)[1]
   newname=os.path.join(path, name)
-  if typ is 'dir':
+  if typ=='dir':
     while os.path.isdir(newname):
       i+=1
       newname=os.path.join(path, str(name+str(i)))
-  elif typ is 'file':
+  elif typ=='file':
     while os.path.isfile(newname):
       i+=1
       newname=os.path.join(path, str(name+str(i)))
@@ -380,16 +384,16 @@ def blast(param, q,blast_time='',seqs=[]):
   from Bio.Blast.Applications import NcbiblastnCommandline
   if param['run']=='local':
     print("Starting BLAST search...")
-    comando_blastn = NcbiblastnCommandline(query=q, db=param['d'],outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=tab,num_threads=param['cpu'])
+    comando_blastn = NcbiblastnCommandline(query=q, db=param['d'],outfmt="7 qseqid sseqid qcovs qlen slen qstart qend", out=tab,num_threads=param['cpu'])
     stdout, stderr = comando_blastn()
   elif param['run']=='web':
     if not 'org' in param:
       print("Starting BLAST search...")
-      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=tab,remote=True,task='megablast')
+      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="7 qseqid sseqid qcovs qlen slen qstart qend", out=tab,remote=True,task='megablast')
       stdout, stderr = comando_blastn()
     else:
       print("Starting BLAST search...")
-      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="'7 qseqid sseqid qcovs qlen slen qstart qend'", out=tab,remote=True,entrez_query="'{}'".format(param['org']),task='megablast')
+      comando_blastn = NcbiblastnCommandline(query=q, db="nt", outfmt="7 qseqid sseqid qcovs qlen slen qstart qend", out=tab,remote=True,entrez_query="'{}'".format(param['org']),task='megablast')
       stdout, stderr = comando_blastn()
   if blast_time=='':
     blast_time=(datetime.now() - blast_start)
@@ -443,7 +447,7 @@ def missingquery(tab,qry,seqs=[]):
       print("BLAST search missing query: {}!".format(misseqs[0]))
     else:
       print("BLAST search missing queries: {}!".format(", ".join(misseqs)))
-    newqfile=open(os.path.join(param["out"], 'newquery.fasta'),'w')
+    newqfile=(os.path.join(param["out"], 'newquery.fasta'),'w')
     newqfile.write(newq)
     newqfile.close()
     if os.path.isfile(os.path.join(param["out"], 'blastn.tab')):
@@ -524,9 +528,9 @@ def extract(qseqs, qid, estart, eend):
   return seq[int(estart-1):eend]
 
 if not len(sys.argv)>1:
-    print(ajuda)
+    print(help)
 elif args.help == True:
-    print(ajuda)
+    print(help)
 elif args.version == True:
     print(version)
 else:
@@ -538,15 +542,45 @@ else:
   valid,param=validateargs(args)
   #print(param)
   if valid==False:
-    print(ajuda)
+    print(help)
   else:
     print('Valid arguments!')
     try:
       log=open(os.path.join(param["out"], 'file.log'),'w')
       log.write('insertion_finder v{}'.format(version))
     except:
-      print('Log file was not created!')
+      print('Log file was not created: {}'.format(error))
     else:  
+      log.write('(c) 2021. Giuliana Pola & Arthur Gruber\n')
+      log.write('For more information access: https://github.com/GiulianaPola/insertion_finder')
+      log.write('\nStart time: {}\n'.format(start_time.strftime("%d/%m/%Y, %H:%M:%S")))
+      log.write('\nWorking directory: {}\n'.format(call))
+      log.write('\nCommand line: {}\n'.format(' '.join(sys.argv)))
+      user=""
+      try:
+        user=os.getlogin()
+      except Exception as e:
+        try:
+          user=os.environ['LOGNAME']
+        except Exception as e:
+          try:
+            user=os.environ['USER']
+          except Exception as e:
+            pass
+          else:
+            pass
+        else:
+          pass
+      else:
+        pass
+      if not user=="":
+        log.write('\nUser: {}\n'.format(user))
+      log.write('\nParameters:\n')
+      for arg in vars(args):
+          value = getattr(args, arg)
+          if value is not None and value is not False:
+              log.write("{}={}\n".format(arg,value))
+      log.flush() 
       qseqs=open(param['q'], "r").read()
       if args.tab==None:
         log.write('\nStarting BLASTn search...')
@@ -608,7 +642,7 @@ else:
           #print("Columns {},{}".format(len(param['columns']),param['columns'][0]))
           #print("Hits {},{}".format(len(param['hits']),param['hits'][0]))
           df=pd.DataFrame(columns=param['columns'],data=param['hits'])
-          df=df.apply(pd.to_numeric, errors='ignore').drop_duplicates()
+          df = df.apply(pd.to_numeric, errors='coerce').drop_duplicates()
           for qid in param['qid']:
             df1=df.loc[df['query id'] == qid]
             log.write("\n\nQuery id: {}".format(qid))
