@@ -45,6 +45,13 @@ python insertion_finder.py -q <query file> -tab <BLASTn table file>
 To report bugs, to ask for help and to give any feedback, please contact Arthur Gruber (argruber@usp.br) or Giuliana L. Pola (giulianapola@usp.br).
 
 ## Versions
+### 2.5.1
+refactor: argument validation and BLAST parsing for robustness
+- Improved validation logic with clearer error handling and messaging.
+- Refactored BLAST output parsing and element extraction to use Biopython
+parsing methods and in-memory processing. Enhanced modularity,
+readability, and maintainability of the codebase.
+
 ### 2.5.0
 feat: adds detailed logging with execution parameters and metadata
 - Records working directory, command line and user in the log file
