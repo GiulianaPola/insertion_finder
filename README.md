@@ -45,6 +45,13 @@ python insertion_finder.py -q <query file> -tab <BLASTn table file>
 To report bugs, to ask for help and to give any feedback, please contact Arthur Gruber (argruber@usp.br) or Giuliana L. Pola (giulianapola@usp.br).
 
 ## Versions
+### 2.6.0
+feat: Upgraded BLAST, element finding, and outputs
+- Speeding up and stabilizing BLAST via parallel processing and retries.
+- Intelligently handling user-provided BLAST tables, including missing query analysis.
+- Refining element detection logic.
+- Enhancing output organization and logging detail.
+
 ### 2.5.1
 refactor: argument validation and BLAST parsing for robustness
 - Improved validation logic with clearer error handling and messaging.
