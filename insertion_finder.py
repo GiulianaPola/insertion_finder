@@ -32,7 +32,7 @@ from concurrent.futures import as_completed
 start_time = datetime.now()
 call=os.path.abspath(os.getcwd())
 param=dict()
-version="2.6.1"
+version="2.6.2"
 help_message = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(version)
 help_message = help_message + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
 help_message = help_message + 'For the latest version acess: https://github.com/GiulianaPola/insertion_finder\n'
@@ -54,8 +54,8 @@ help_message = help_message + "-maxlen <int>\tMaximum element's length in base p
 help_message = help_message + "-mincov <int>\tMinimum % query coverage per subject (default: 30)\n"
 help_message = help_message + "-maxcov <int>\tMaximum % query coverage per subject (default: 90)\n"
 help_message = help_message + "-cpu <int>\tNumber of threads to execute the local blastn search (default: 18)\n"
-help_message = help_message + "-max_web_workers <int>\tMax parallel web BLAST jobs (default: 1. NCBI recommends 1-3 with significant delays. Use >1 with extreme caution.)\n"
-help_message = help_message + "-web_inter_batch_delay <int>\tDelay in seconds between submitting batches for web BLAST (default: 15. Increase if penalized or using >1 worker).\n"
+#help_message = help_message + "-max_web_workers <int>\tMax parallel web BLAST jobs (default: 1. NCBI recommends 1-3 with significant delays. Use >1 with extreme caution.)\n"
+#help_message = help_message + "-web_inter_batch_delay <int>\tDelay in seconds between submitting batches for web BLAST (default: 15. Increase if penalized or using >1 worker).\n"
 help_message = help_message + "-color <int>\tThe RGB color of the element that is shown by the feature table, three integers between 0 and 255 separated by commas (default: 255,0,0)"
 
 parser = argparse.ArgumentParser(add_help=False)
@@ -74,6 +74,7 @@ parser.add_argument('-maxcov')
 parser.add_argument('-run')
 parser.add_argument('-max_web_workers')
 parser.add_argument('-web_inter_batch_delay')
+parser.add_argument('-max_bp_batch_size')
 parser.add_argument('-version', action='store_true')
 parser.add_argument('-h', '--help', action='store_true')
 args = parser.parse_args()
@@ -229,7 +230,7 @@ def validate_args(args):
                 print("ERROR: Max web workers (-max_web_workers) must be an integer. Defaulting to 1.")
                 param['max_web_workers'] = 1
         if args.web_inter_batch_delay is None:
-            param['web_inter_batch_delay'] = 15
+            param['web_inter_batch_delay'] = 60
         else:
             try:
                 wibd = int(args.web_inter_batch_delay)
@@ -240,11 +241,25 @@ def validate_args(args):
                     elif wibd < 5:
                         print("WARNING: -web_inter_batch_delay is {}s. Consider increasing if NCBI warnings persist.".format(wibd))
                 else:
-                    print("Web inter-batch delay (-web_inter_batch_delay) cannot be negative. Defaulting to 15.")
-                    param['web_inter_batch_delay'] = 15
+                    print("Web inter-batch delay (-web_inter_batch_delay) cannot be negative. Defaulting to 60.")
+                    param['web_inter_batch_delay'] = 60
             except ValueError:
-                print("ERROR: Web inter-batch delay (-web_inter_batch_delay) must be an integer. Defaulting to 15.")
-                param['web_inter_batch_delay'] = 15
+                print("ERROR: Web inter-batch delay (-web_inter_batch_delay) must be an integer. Defaulting to 60.")
+                param['web_inter_batch_delay'] = 60
+        if args.max_bp_batch_size is None:
+            param['max_bp_batch_size'] = 1000000
+        else:
+            try:
+                param['max_bp_batch_size'] = int(args.max_bp_batch_size)
+                if param['max_bp_batch_size'] <= 0:
+                    print("ERROR: Maximum bp batch size (-max_bp_batch_size) must be a positive integer.")
+                    valid = False
+                elif param['max_bp_batch_size'] > 1000000:
+                    print("ERROR: Maximum bp batch size (-max_bp_batch_size) must be less than 1000000 bp.")
+                    valid = False
+            except ValueError:
+                print("ERROR: Maximum bp batch size (-max_bp_batch_size) must be an integer.")
+                valid = False
     if args.tab is not None:
         if not os.path.isfile(args.tab):
             print("BLASTn table file (-tab) '{}' not exist!".format(args.tab))
@@ -378,12 +393,11 @@ def validate_args(args):
     return valid,param
 
 def split_fasta(input_file):
-    MAX_BP_PER_BATCH = 200000 
-    #MAX_SEQS_PER_BATCH = 50
+    MAX_BP_PER_BATCH = param.get('max_bp_batch_size', 1000000)
     output_dir_parts = None
     try:
         if log and hasattr(log, 'write'):
-            log.write("\nInput file was split according to the limit parameters of {} bp.\n".format(MAX_BP_PER_BATCH)) # or {} sequences  #,MAX_SEQS_PER_BATCH
+            log.write("\nInput file was split according to the limit parameters of {} bp.\n".format(MAX_BP_PER_BATCH))
             log.flush()
         if not os.path.isfile(input_file):
             if log and hasattr(log, 'write'):
@@ -426,7 +440,7 @@ def split_fasta(input_file):
                         current_batch_records.append(record)
                         record_idx += 1
                     break
-                if (current_batch_bp + record_len > MAX_BP_PER_BATCH and current_batch_records): #or len(current_batch_records) >= MAX_SEQS_PER_BATCH) 
+                if (current_batch_bp + record_len > MAX_BP_PER_BATCH and current_batch_records):
                     break
                 
                 current_batch_records.append(record)
@@ -504,10 +518,12 @@ def run_blast_batch(batch_file, batch_index, current_blast_param, override_outpu
     global blastn_log_file_handle
     is_original_full_query = os.path.abspath(batch_file) == os.path.abspath(current_blast_param.get('q_original_for_this_run', ''))
     batch_log_suffix = "original_query" if is_original_full_query else "batch_{}".format(batch_index + 1)
+    
     if log and hasattr(log, 'write') and (not batch_log_suffix == 'original_query' or (hasattr(split_fasta, 'last_split_files_global_ref') and split_fasta.last_split_files_global_ref and len(split_fasta.last_split_files_global_ref) > 1)):
         log.write("\nPreparing BLAST for {} (file: {})...".format(batch_log_suffix, batch_file))
         log.flush()
-    actual_batch_output_path = ""
+
+    # Define o caminho de saída para o resultado do BLAST
     if override_output_path:
         actual_batch_output_path = override_output_path
     else:
@@ -521,13 +537,16 @@ def run_blast_batch(batch_file, batch_index, current_blast_param, override_outpu
                 if blastn_log_file_handle: blastn_log_file_handle.write(err_msg); blastn_log_file_handle.flush()
                 return 'FAILURE', None, False
         actual_batch_output_path = os.path.join(blastn_parts_dir_for_this_run, "blast_batch_{}.tab".format(batch_index + 1))
+
     blastn_common_args = {
         'query': batch_file,
         "outfmt": "'7 qseqid sseqid qcovs qlen slen qstart qend evalue'",
         "out": actual_batch_output_path,
         "task": "megablast",
-        "max_target_seqs": 100
+        "max_target_seqs": 100,
+        "evalue": "1e-5"
     }
+
     if current_blast_param.get('run') == 'web':
         blastn_cline_obj = NcbiblastnCommandline(db='nt', remote=True, **blastn_common_args)
         if 'org' in current_blast_param and current_blast_param['org']:
@@ -540,10 +559,20 @@ def run_blast_batch(batch_file, batch_index, current_blast_param, override_outpu
         if log: log.write(err_msg); log.flush()
         if blastn_log_file_handle: blastn_log_file_handle.write(err_msg + "\n"); blastn_log_file_handle.flush()
         return 'FAILURE', None, False
+
     max_attempts = 3
     base_backoff_delay = 15
     attempt = 0
     cpu_warning_detected = False
+
+    fatal_stderr_patterns = [
+        "Failed to connect", 
+        "Connection refused", 
+        "Service not found",
+        "Name or service not known",
+        "failure in name resolution"
+    ]
+
     while attempt < max_attempts:
         cmd_str = str(blastn_cline_obj)
         attempt_timestamp = time.ctime()
@@ -552,20 +581,26 @@ def run_blast_batch(batch_file, batch_index, current_blast_param, override_outpu
                 current_blast_param.get('run').upper(), attempt + 1, max_attempts,
                 batch_log_suffix, batch_file, attempt_timestamp, cmd_str))
             blastn_log_file_handle.flush()
+        
         try:
             process = subprocess.Popen(cmd_str, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout_output_bytes, stderr_output_bytes = process.communicate()
             stderr_output = stderr_output_bytes.decode('utf-8', 'replace') if stderr_output_bytes is not None else ""
             return_code = process.returncode
+
             if stderr_output and blastn_log_file_handle:
                 blastn_log_file_handle.write("STDERR Output:\n{}\n".format(stderr_output))
                 blastn_log_file_handle.flush()
+
             if "Searches from this IP address have consumed a large amount of server CPU time" in stderr_output:
                 cpu_warning_detected = True
                 if blastn_log_file_handle:
                     blastn_log_file_handle.write("NCBI CPU Usage Warning Triggered.\n")
                     blastn_log_file_handle.flush()
-            if return_code == 0:
+
+            is_fatal_error = any(pattern in stderr_output for pattern in fatal_stderr_patterns)
+
+            if return_code == 0 and not is_fatal_error:
                 if blastn_log_file_handle:
                     blastn_log_file_handle.write("SUCCESS: {} BLAST for {} completed.\n".format(current_blast_param.get('run').upper(), batch_log_suffix))
                     blastn_log_file_handle.flush()
@@ -574,7 +609,9 @@ def run_blast_batch(batch_file, batch_index, current_blast_param, override_outpu
                 if "BLAST query/options error" in stderr_output or "Argument" in stderr_output:
                     if log: log.write("\nERROR: [{}] Permanent BLAST error. Not retrying. Check blastn.log.\n".format(batch_log_suffix))
                     return 'FAILURE', None, cpu_warning_detected
+                
                 raise subprocess.CalledProcessError(return_code, cmd_str, output=stderr_output)
+
         except (subprocess.CalledProcessError, Exception) as e:
             error_detail = e.output if hasattr(e, 'output') and e.output else str(e)
             if blastn_log_file_handle:
@@ -582,6 +619,7 @@ def run_blast_batch(batch_file, batch_index, current_blast_param, override_outpu
                     current_blast_param.get('run').upper(), batch_log_suffix, attempt + 1,
                     max_attempts, getattr(e, 'returncode', 'N/A'), error_detail.strip()))
                 blastn_log_file_handle.flush()
+            
             attempt += 1
             if attempt < max_attempts:
                 wait_time = (base_backoff_delay * (2 ** (attempt - 1))) + random.uniform(0, 5)
@@ -598,13 +636,14 @@ def run_blast_batch(batch_file, batch_index, current_blast_param, override_outpu
                 if log: log.write(final_fail_msg)
                 if blastn_log_file_handle: blastn_log_file_handle.write(final_fail_msg + "\n")
                 return 'FAILURE', None, cpu_warning_detected
+
     return 'FAILURE', None, cpu_warning_detected
 
 split_fasta.last_split_files_global_ref = []
 
 def blast(current_param_for_blast, query_filepath_for_this_blast_run,
-          desired_final_output_filename="blastn.tab",
-          blast_time_start_obj=None):
+            desired_final_output_filename="blastn.tab",
+            blast_time_start_obj=None):
     final_combined_tab_for_this_run = os.path.join(current_param_for_blast["out"], desired_final_output_filename)
     blastn_parts_intermediate_dir = os.path.join(current_param_for_blast["out"], "blastn_parts")
     current_param_for_blast['current_blastn_parts_dir'] = blastn_parts_intermediate_dir
@@ -662,9 +701,9 @@ def blast(current_param_for_blast, query_filepath_for_this_blast_run,
                 if log: log.write("\nERROR: BLAST batch for {} failed. See blastn.log for details. Continuing with next batch.".format(os.path.basename(batch_file_path))); log.flush()
         
         if failed_batches:
-             if log:
-                log.write("\nWARNING: {} of {} BLAST batches failed. Proceeding with results from successful batches.".format(len(failed_batches), len(batch_files_for_this_run)))
-                log.flush()
+                 if log:
+                    log.write("\nWARNING: {} of {} BLAST batches failed. Proceeding with results from successful batches.".format(len(failed_batches), len(batch_files_for_this_run)))
+                    log.flush()
 
         if not pool_generated_result_files:
             if log: log.write("\nERROR: No BLAST result files were generated as all batches failed.\n"); log.flush()
@@ -979,125 +1018,83 @@ try:
             log.write("\nFound {} unique query IDs in input file {}.\n".format(len(all_query_ids_from_input_fasta), param['q'])); log.flush()
             param['qid_original_from_fasta'] = all_query_ids_from_input_fasta
 
-            initial_blast_tab_path = None
-            blast_run_for_initial_table = False
+            final_blast_tab_to_analyze = os.path.join(param["out"], "blastn.tab")
 
             if args.tab is None:
                 log.write('\nStarting initial BLASTn search for all queries...\n'); log.flush()
-                initial_blast_duration, generated_initial_tab_path = blast(param, param['q'], desired_final_output_filename="blastn_0.tab")
+                initial_blast_duration, generated_tab_path = blast(param, param['q'], desired_final_output_filename="blastn.tab")
 
                 print('Initial BLASTn search execution time: {}'.format(initial_blast_duration))
                 log.write('\nInitial BLASTn search execution time: {}\n'.format(initial_blast_duration)); log.flush()
 
-                if not generated_initial_tab_path or not os.path.exists(generated_initial_tab_path):
-                    err_msg = "\nCRITICAL ERROR: Initial BLAST did not produce an output table. Expected at {}. Exiting.\n".format(generated_initial_tab_path)
+                if not generated_tab_path or not os.path.exists(generated_tab_path):
+                    err_msg = "\nCRITICAL ERROR: Initial BLAST did not produce an output table. Exiting.\n"
                     if log and hasattr(log, 'write'): log.write(err_msg); log.flush()
                     sys.stderr.write(err_msg)
                     sys.exit("Initial BLAST failed to produce an output table.")
-                initial_blast_tab_path = generated_initial_tab_path
-                blast_run_for_initial_table = True
             else:
                 initial_blast_tab_path = param['tab']
                 log.write("\nUsing user-provided BLASTn table as initial input: {}\n".format(initial_blast_tab_path)); log.flush()
+                log.write("Copying it to {} for processing.\n".format(final_blast_tab_to_analyze)); log.flush()
+                shutil.copy(initial_blast_tab_path, final_blast_tab_to_analyze)
 
-            log.write("\nChecking for missing queries. Comparing {} input FASTA IDs against BLAST results in: {}\n".format(len(all_query_ids_from_input_fasta), os.path.basename(initial_blast_tab_path))); log.flush()
-            missing_query_ids = get_missing_queries(initial_blast_tab_path, all_query_ids_from_input_fasta)
 
-            final_blast_tab_to_analyze = initial_blast_tab_path
+            complementary_run_counter = 0
+            MAX_COMPLEMENTARY_RUNS = 5
 
-            if missing_query_ids:
-                log.write("\nFound {} missing queries: {}{}\n".format(len(missing_query_ids), ', '.join(missing_query_ids[:5]), '...' if len(missing_query_ids) > 5 else '')); log.flush()
+            while complementary_run_counter < MAX_COMPLEMENTARY_RUNS:
+                missing_query_ids = get_missing_queries(final_blast_tab_to_analyze, all_query_ids_from_input_fasta)
 
-                missing_queries_temp_fasta = os.path.join(param["out"], "missing_queries_supplemental.fasta")
+                if not missing_query_ids:
+                    log.write("\nSUCCESS: All {} queries are present in the final BLAST table. Proceeding to analysis.\n".format(len(all_query_ids_from_input_fasta)))
+                    log.flush()
+                    break 
+
+                complementary_run_counter += 1
+                log.write("\n[Check #{}] Found {} missing queries. Attempting to run a complementary BLAST.\n".format(complementary_run_counter, len(missing_query_ids)))
+                log.write("Missing IDs: {}{}\n".format(', '.join(missing_query_ids[:10]), '...' if len(missing_query_ids) > 10 else ''))
+                log.flush()
+
+                missing_queries_temp_fasta = os.path.join(param["out"], "missing_queries_temp.fasta")
+                supplementary_results_tab_path = os.path.join(param["out"], "blastn_extra_temp.tab")
+
                 if not write_missing_queries(missing_query_ids, param['q'], missing_queries_temp_fasta):
-                    log.write("\nERROR: Failed to write missing queries to {}. Analysis will proceed with current BLAST table: {}.\n".format(missing_queries_temp_fasta, initial_blast_tab_path)); log.flush()
-                else:
-                    log.write("Running supplementary BLAST for {} missing queries (from {})...\n".format(len(missing_query_ids), os.path.basename(missing_queries_temp_fasta))); log.flush()
+                    log.write("\nERROR: Failed to write missing queries to FASTA file. Halting checks.\n")
+                    log.flush()
+                    break 
 
-                    sup_blast_param = param.copy()
+                sup_blast_param = param.copy()
+                if param.get('run') != 'local' or not param.get('d'):
+                    sup_blast_param['run'] = 'web' 
+                log.write("Supplementary BLAST will run in '{}' mode.\n".format(sup_blast_param['run'])); log.flush()
 
-                    original_run_mode = param.get('run')
-                    if original_run_mode == 'local' and 'd' in param and os.path.exists(param['d']):
-                        sup_blast_param['run'] = 'local'
-                        sup_blast_param['d'] = param['d']
-                        if 'cpu' in param: sup_blast_param['cpu'] = param['cpu']
-                    else:
-                        sup_blast_param['run'] = 'web'
-                        sup_blast_param['max_web_workers'] = param.get('max_web_workers', 1)
-                        sup_blast_param['web_inter_batch_delay'] = param.get('web_inter_batch_delay', 15) 
+                sup_blast_duration, generated_sup_tab = blast(sup_blast_param, missing_queries_temp_fasta, desired_final_output_filename=os.path.basename(supplementary_results_tab_path))
+                log.write('\nSupplementary BLASTn search #{} execution time: {}\n'.format(complementary_run_counter, sup_blast_duration)); log.flush()
 
-
-                    log.write("Supplementary BLAST will run in '{}' mode.\n".format(sup_blast_param['run'])); log.flush()
-
-                    sup_blast_duration, supplementary_results_tab_path = blast(sup_blast_param, missing_queries_temp_fasta, desired_final_output_filename="blastn_extra.tab")
-
-                    log.write('\nSupplementary BLASTn search execution time: {}\n'.format(sup_blast_duration)); log.flush()
-
-                    if supplementary_results_tab_path and os.path.exists(supplementary_results_tab_path):
-                        final_merged_tab_path_for_analysis = os.path.join(param["out"], "blastn.tab") 
-                        log.write("\nMerging initial BLAST results ({}) with supplementary results ({}) into {}\n".format(os.path.basename(initial_blast_tab_path), os.path.basename(supplementary_results_tab_path), os.path.basename(final_merged_tab_path_for_analysis))); log.flush()
+                if generated_sup_tab and os.path.exists(generated_sup_tab):
+                    log.write("Appending supplementary results to '{}'.\n".format(os.path.basename(final_blast_tab_to_analyze))); log.flush()
+                    with open(final_blast_tab_to_analyze, 'ab') as master_file:  
+                        master_file.seek(0, 2)
+                        if master_file.tell() > 0:
+                            master_file.seek(-1, 2)
+                            if master_file.read(1) != b'\n':
+                                master_file.write(b'\n')
                         
-                        with open(final_merged_tab_path_for_analysis, 'wb+') as outfile_merged: 
-                            header_lines_written = False
-                            if os.path.exists(initial_blast_tab_path):
-                                with open(initial_blast_tab_path, 'rb') as infile_initial: 
-                                    for line_init_bytes in infile_initial:
-                                        outfile_merged.write(line_init_bytes)
-                                        if line_init_bytes.startswith(b"# Fields:"): header_lines_written = True
-                            
-                            if os.path.exists(supplementary_results_tab_path): 
-                                outfile_merged.seek(0, 2) 
-                                if outfile_merged.tell() > 0: 
-                                    outfile_merged.seek(-1, 2) 
-                                    if outfile_merged.read(1) != b'\n':
-                                        outfile_merged.write(b"\n") 
-                                    outfile_merged.seek(0, 2)
-                                    
-                                with open(supplementary_results_tab_path, 'rb') as infile_sup: 
-                                    wrote_sup_specific_header = False
-                                    for line_sup_bytes in infile_sup:
-                                        if line_sup_bytes.startswith(b"#"):
-                                            if not header_lines_written and not wrote_sup_specific_header : 
-                                                outfile_merged.write(line_sup_bytes)
-                                                if line_sup_bytes.startswith(b"# Fields:"): wrote_sup_specific_header = True
-                                        else:
-                                            outfile_merged.write(line_sup_bytes)
+                        with open(generated_sup_tab, 'rb') as extra_file:
+                            for line in extra_file:
+                                if not line.strip().startswith(b'# Fields:'):
+                                    master_file.write(line)
+                else:
+                    log.write("\nWARNING: Supplementary BLAST run did not produce results. Missing queries will remain for the next check.\n"); log.flush()
 
-                        final_blast_tab_to_analyze = final_merged_tab_path_for_analysis
-                        log.write("Successfully merged BLAST results. Final table for analysis: {}\n".format(final_blast_tab_to_analyze)); log.flush()
-
-                        if os.path.exists(missing_queries_temp_fasta):
-                            try: os.remove(missing_queries_temp_fasta)
-                            except OSError: log.write("\nWARNING: Could not remove {}\n".format(missing_queries_temp_fasta));log.flush()
-
-                        if supplementary_results_tab_path != final_blast_tab_to_analyze and os.path.exists(supplementary_results_tab_path):
-                            try: os.remove(supplementary_results_tab_path)
-                            except OSError: log.write("\nWARNING: Could not remove {}\n".format(supplementary_results_tab_path));log.flush()
-
-                        if blast_run_for_initial_table and initial_blast_tab_path != final_blast_tab_to_analyze and \
-                           initial_blast_tab_path != args.tab and os.path.exists(initial_blast_tab_path) :
-                            try: os.remove(initial_blast_tab_path)
-                            except OSError: log.write("\nWARNING: Could not remove {}\n".format(initial_blast_tab_path));log.flush()
-
-                    else:
-                        log.write("\nERROR: Supplementary BLAST for missing queries did not produce an output table. Analysis will use results from: {}\n".format(initial_blast_tab_path)); log.flush()
-            else:
-                log.write("\nNo missing queries found in the initial BLAST results. Using: {}\n".format(os.path.basename(initial_blast_tab_path))); log.flush()
-                if not blast_run_for_initial_table and initial_blast_tab_path != os.path.join(param["out"], "blastn.tab"):
-                    try:
-                        shutil.copy(initial_blast_tab_path, os.path.join(param["out"], "blastn.tab"))
-                        final_blast_tab_to_analyze = os.path.join(param["out"], "blastn.tab")
-                        log.write("\nCopied user-provided table to {} for consistent analysis path.\n".format(final_blast_tab_to_analyze)); log.flush()
-                    except Exception as e_copy:
-                        log.write("\nWARNING: Could not copy user-provided table {} to standard name: {}. Using original path.\n".format(initial_blast_tab_path, e_copy)); log.flush()
-                elif blast_run_for_initial_table and initial_blast_tab_path != os.path.join(param["out"], "blastn.tab"): 
-                    try:
-                        os.rename(initial_blast_tab_path, os.path.join(param["out"], "blastn.tab"))
-                        final_blast_tab_to_analyze = os.path.join(param["out"], "blastn.tab")
-                        log.write("\nRenamed generated BLAST table to {} for consistent analysis path.\n".format(final_blast_tab_to_analyze)); log.flush()
-                    except Exception as e_rename:
-                         log.write("\nWARNING: Could not rename generated BLAST table {} to standard name: {}. Using original path.\n".format(initial_blast_tab_path, e_rename)); log.flush()
-
+                if os.path.exists(missing_queries_temp_fasta): os.remove(missing_queries_temp_fasta)
+                if os.path.exists(supplementary_results_tab_path): os.remove(supplementary_results_tab_path)
+            
+            else: 
+                final_missing = get_missing_queries(final_blast_tab_to_analyze, all_query_ids_from_input_fasta)
+                if final_missing:
+                    log.write("\nWARNING: After {} attempts, {} queries are still missing. Analysis will proceed with incomplete data.\n".format(MAX_COMPLEMENTARY_RUNS, len(final_missing)))
+                    log.flush()
 
             if not final_blast_tab_to_analyze or not os.path.exists(final_blast_tab_to_analyze):
                 err_msg = "\nCRITICAL ERROR: Final BLAST table for parsing ('{}') not found or not generated. Exiting.\n".format(final_blast_tab_to_analyze)
@@ -1145,7 +1142,7 @@ try:
                 with open(elements_summary_path,'w') as tabular:
                     tabular.write('insertion_finder v{}\n'.format(version))
                     tabular.write("\nQuery file: {}".format(param["q"]))
-                    if args.tab is not None and not blast_run_for_initial_table:
+                    if args.tab is not None:
                         tabular.write("\nOriginal user-provided Blastn table file: {}".format(args.tab))
                     tabular.write("\nFinal Blastn table file processed: {}".format(param["tab"]))
 
@@ -1322,89 +1319,87 @@ try:
                                     reason_for_decision = "Multiple blocks, but avg. qcovs {:.2f}% not in range ({}-{}).".format(current_avg_cov_for_sid, param['mincov'], param['maxcov'])
                             else: 
                                 reason_for_rejection = "No valid contigs formed from alignments."
-                                if subject_details_idx == 0 : # Update first subject log if this is the reason
-                                     first_subject_processed_details_log = current_subject_temp_log + ["[{}] Reason: {}".format(qid_from_fasta, reason_for_rejection)]
+                                if subject_details_idx == 0 : 
+                                        first_subject_processed_details_log = current_subject_temp_log + ["[{}] Reason: {}".format(qid_from_fasta, reason_for_rejection)]
 
 
                             subject_analysis_summary[current_sid_for_analysis] = reason_for_decision
                             
                             if element_identified_in_subject:
                                 if param['minlen'] <= elen_elem <= param['maxlen']:
-                                    if not processed_current_qid_for_element: # First valid element found
+                                    if not processed_current_qid_for_element:
                                         best_subject_log_details_for_valid_element = current_subject_temp_log + ["[{}] Analysis Result: {}".format(qid_from_fasta, reason_for_decision)]
                                         best_subject_log_details_for_valid_element.append("[{}] Valid element size found!".format(qid_from_fasta))
                                     
-                                    processed_current_qid_for_element = True 
-                                    econt += 1
-                                    tabular.write("{}\t{}\t{:.2f}\t{}\tyes\t{}\t{}\t{}\tyes\n".format(
-                                        qid_from_fasta,current_sid_for_analysis, current_avg_cov_for_sid, len(contigs_asm),
-                                        estart_elem,eend_elem,elen_elem))
+                                        processed_current_qid_for_element = True 
+                                        econt += 1
+                                        tabular.write("{}\t{}\t{:.2f}\t{}\tyes\t{}\t{}\t{}\tyes\n".format(
+                                            qid_from_fasta,current_sid_for_analysis, current_avg_cov_for_sid, len(contigs_asm),
+                                            estart_elem,eend_elem,elen_elem))
 
 
-                                    query_specific_output_dir = os.path.join(param["out"], str(qid_from_fasta))
-                                    if not os.path.exists(query_specific_output_dir): os.makedirs(query_specific_output_dir)
+                                        query_specific_output_dir = os.path.join(param["out"], str(qid_from_fasta))
+                                        if not os.path.exists(query_specific_output_dir): os.makedirs(query_specific_output_dir)
 
-                                    ft_filepath = os.path.join(query_specific_output_dir, "{}_element.gb".format(str(qid_from_fasta)))
-                                    try:
-                                        with open(ft_filepath,'w') as ft_handle:
-                                            ft_handle.write("     misc_feature     {}..{}\n".format(estart_elem,eend_elem))
-                                            ft_handle.write("                     /label=element\n")
-                                            ft_handle.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
-                                            ft_handle.write("ORIGIN\n")
-                                            original_query_seq_for_gb = ""
-                                            header_to_find_gb = ">" + str(qid_from_fasta)
-                                            seq_start_idx_gb = qseqs_content.find(header_to_find_gb)
-                                            if seq_start_idx_gb != -1:
-                                                seq_actual_start_gb = qseqs_content.find('\n', seq_start_idx_gb) + 1
-                                                if seq_actual_start_gb != 0:
-                                                    next_header_gb = qseqs_content.find('>', seq_actual_start_gb)
-                                                    seq_block_gb = qseqs_content[seq_actual_start_gb : next_header_gb if next_header_gb!=-1 else len(qseqs_content)]
-                                                    original_query_seq_for_gb = seq_block_gb.replace('\n','').replace('\r','')
+                                        ft_filepath = os.path.join(query_specific_output_dir, "{}_element.gb".format(str(qid_from_fasta)))
+                                        try:
+                                            with open(ft_filepath,'w') as ft_handle:
+                                                ft_handle.write("     misc_feature      {}..{}\n".format(estart_elem,eend_elem))
+                                                ft_handle.write("                     /label=element\n")
+                                                ft_handle.write("                     /color={} {} {}\n".format(param['color'][0],param['color'][1],param['color'][2]))
+                                                ft_handle.write("ORIGIN\n")
+                                                original_query_seq_for_gb = ""
+                                                header_to_find_gb = ">" + str(qid_from_fasta)
+                                                seq_start_idx_gb = qseqs_content.find(header_to_find_gb)
+                                                if seq_start_idx_gb != -1:
+                                                    seq_actual_start_gb = qseqs_content.find('\n', seq_start_idx_gb) + 1
+                                                    if seq_actual_start_gb != 0:
+                                                        next_header_gb = qseqs_content.find('>', seq_actual_start_gb)
+                                                        seq_block_gb = qseqs_content[seq_actual_start_gb : next_header_gb if next_header_gb!=-1 else len(qseqs_content)]
+                                                        original_query_seq_for_gb = seq_block_gb.replace('\n','').replace('\r','')
 
-                                            if original_query_seq_for_gb:
-                                                for n_gb_idx in range(0, len(original_query_seq_for_gb), 60):
-                                                    ft_handle.write(str(n_gb_idx+1).rjust(9, ' '))
-                                                    chunk_val_gb = original_query_seq_for_gb[n_gb_idx : n_gb_idx+60]
-                                                    for j_gb_idx in range(0, len(chunk_val_gb), 10):
-                                                        ft_handle.write(" {}".format(chunk_val_gb[j_gb_idx:j_gb_idx+10]))
-                                                    ft_handle.write("\n")
-                                                ft_handle.write("//\n")
-                                        if log: best_subject_log_details_for_valid_element.append("[{}] Writing element's feature table: {}".format(qid_from_fasta, ft_filepath));
-                                    except Exception as e_ft_write:
-                                        if log: best_subject_log_details_for_valid_element.append("[{}] ERROR writing feature table for {}: {}".format(qid_from_fasta, current_sid_for_analysis, e_ft_write));
+                                                if original_query_seq_for_gb:
+                                                    for n_gb_idx in range(0, len(original_query_seq_for_gb), 60):
+                                                        ft_handle.write(str(n_gb_idx+1).rjust(9, ' '))
+                                                        chunk_val_gb = original_query_seq_for_gb[n_gb_idx : n_gb_idx+60]
+                                                        for j_gb_idx in range(0, len(chunk_val_gb), 10):
+                                                            ft_handle.write(" {}".format(chunk_val_gb[j_gb_idx:j_gb_idx+10]))
+                                                        ft_handle.write("\n")
+                                                    ft_handle.write("//\n")
+                                            if log: best_subject_log_details_for_valid_element.append("[{}] Writing element's feature table: {}".format(qid_from_fasta, ft_filepath));
+                                        except Exception as e_ft_write:
+                                            if log: best_subject_log_details_for_valid_element.append("[{}] ERROR writing feature table for {}: {}".format(qid_from_fasta, current_sid_for_analysis, e_ft_write));
 
-                                    fasta_element_path = os.path.join(query_specific_output_dir, "{}_element.fasta".format(str(qid_from_fasta)))
-                                    try:
-                                        element_sequence_data = extract(qseqs_content, str(qid_from_fasta), estart_elem, eend_elem)
-                                        if element_sequence_data:
-                                            with open(fasta_element_path,'w') as fasta_h:
-                                                fasta_h.write(">{0} - element - {1}-{2}\n".format(qid_from_fasta,estart_elem,eend_elem))
-                                                for k_seq_idx in range(0, len(element_sequence_data), 60):
-                                                    fasta_h.write(element_sequence_data[k_seq_idx:k_seq_idx+60] + "\n")
-                                            if log: best_subject_log_details_for_valid_element.append("[{}] Writing element's FASTA: {}".format(qid_from_fasta, fasta_element_path));
-                                        else:
-                                            if log: best_subject_log_details_for_valid_element.append("[{}] WARNING: Extracted element sequence was empty for {}. FASTA not written.".format(qid_from_fasta, current_sid_for_analysis));
-                                    except Exception as e_fasta_write:
-                                        if log: best_subject_log_details_for_valid_element.append("[{}] ERROR writing element FASTA for {}: {}".format(qid_from_fasta, current_sid_for_analysis, e_fasta_write));
-                                    
-                                    if log and best_subject_log_details_for_valid_element: log.write("\n".join(best_subject_log_details_for_valid_element)); log.flush() # Log details of the valid element
-                                    break # Found a valid element, move to next query_id
+                                        fasta_element_path = os.path.join(query_specific_output_dir, "{}_element.fasta".format(str(qid_from_fasta)))
+                                        try:
+                                            element_sequence_data = extract(qseqs_content, str(qid_from_fasta), estart_elem, eend_elem)
+                                            if element_sequence_data:
+                                                with open(fasta_element_path,'w') as fasta_h:
+                                                    fasta_h.write(">{0} - element - {1}-{2}\n".format(qid_from_fasta,estart_elem,eend_elem))
+                                                    for k_seq_idx in range(0, len(element_sequence_data), 60):
+                                                        fasta_h.write(element_sequence_data[k_seq_idx:k_seq_idx+60] + "\n")
+                                                if log: best_subject_log_details_for_valid_element.append("[{}] Writing element's FASTA: {}".format(qid_from_fasta, fasta_element_path));
+                                            else:
+                                                if log: best_subject_log_details_for_valid_element.append("[{}] WARNING: Extracted element sequence was empty for {}. FASTA not written.".format(qid_from_fasta, current_sid_for_analysis));
+                                        except Exception as e_fasta_write:
+                                            if log: best_subject_log_details_for_valid_element.append("[{}] ERROR writing element FASTA for {}: {}".format(qid_from_fasta, current_sid_for_analysis, e_fasta_write));
+                                        
+                                        if log and best_subject_log_details_for_valid_element: log.write("\n".join(best_subject_log_details_for_valid_element)); log.flush() # Log details of the valid element
+                                        break 
 
-                                else: # Element identified, but size invalid
+                                else: 
                                     subject_analysis_summary[current_sid_for_analysis] = "Element found but size invalid: Length {} (not within {}-{})".format(elen_elem, param['minlen'], param['maxlen'])
-                                    if not processed_current_qid_for_element: # If this is the first element-like thing we see, even if size is bad
+                                    if not processed_current_qid_for_element: 
                                         best_subject_log_details = current_subject_temp_log + ["[{}] Element found but size invalid: Length {} (not within {}-{})".format(qid_from_fasta, elen_elem, param['minlen'], param['maxlen'])]
                                     
                                     tabular.write("{}\t{}\t{:.2f}\t{}\tyes (invalid size)\t{}\t{}\t{}\tno\n".format(
                                         qid_from_fasta,current_sid_for_analysis, current_avg_cov_for_sid, len(contigs_asm),
                                         estart_elem,eend_elem,elen_elem))
-                                    # Do not set processed_current_qid_for_element to True here if we want to keep searching for a perfectly valid one.
-                                    # However, the current logic will break if ANY element is found. This needs to be consistent with desired behavior.
-                                    # For now, assume any element identification stops further search for this query.
-                                    processed_current_qid_for_element = True # Treat as processed for logging summary.
+                                    
+                                    processed_current_qid_for_element = True 
                                     if log and best_subject_log_details: log.write("\n".join(best_subject_log_details)); log.flush()
                                     break 
-                            elif subject_details_idx == 0: # First subject, no element identified
+                            elif subject_details_idx == 0:
                                 reason_for_rejection="No element identified"
                                 best_subject_log_details = current_subject_temp_log + ["[{}] Analysis Result: {}".format(qid_from_fasta, reason_for_rejection)]
 
@@ -1415,8 +1410,8 @@ try:
                                 log.write("\n[{}]  - {}: {}".format(qid_from_fasta, subj_id_summary, reason_summary))
                             log.flush()
 
-                        if not processed_current_qid_for_element: # No valid element found for this query_id after checking all subjects
-                            if log and best_subject_log_details: # Log details of the best candidate (last one processed or first one if it failed early)
+                        if not processed_current_qid_for_element: 
+                            if log and best_subject_log_details: 
                                 log.write("\n".join(best_subject_log_details)); log.flush()
                             
                             if avg_coverage_sorted_for_qid :
