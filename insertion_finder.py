@@ -43,7 +43,7 @@ warnings.showwarning = warn_with_traceback
 start_time = datetime.now()
 cwd_path = os.path.abspath(os.getcwd())
 params = dict()
-VERSION = "2.7.0"
+VERSION = "2.7.1"
 HELP_MSG = 'insertion_finder v{} - element insertion finder in a genome through a BLAST search\n'.format(VERSION)
 HELP_MSG = HELP_MSG + '(c) 2021. Arthur Gruber & Giuliana Pola\n'
 HELP_MSG = HELP_MSG + 'For the latest version acess: https://github.com/GiulianaPola/insertion_finder\n'
@@ -182,7 +182,7 @@ def validate_args(args):
         is_valid = False
 
     if params.get('run') == 'local' and not args.tab:
-        if not (args.d and os.path.isfile(args.d) and is_fasta(args.d)):
+        if not (args.d): #and os.path.isfile(args.d)) and is_fasta(args.d)
             sys.stderr.write("ERROR: A valid database FASTA file is required with -d for local runs.\n")
             is_valid = False
         else:
@@ -1028,7 +1028,7 @@ if __name__ == "__main__":
         blast_log_fh.flush()
 
         log.write('insertion_finder v{}\n'.format(VERSION))
-        log.write("Last modified datetime of this script: " + str(last_modified_datetime))
+        #log.write("Last modified datetime of this script: " + str(last_modified_datetime))
         log.write('\n(c) 2021. Arthur Gruber & Giuliana Pola | https://github.com/GiulianaPola/insertion_finder\n')
         log.write('\nRun started: {}\n'.format(start_time.strftime("%Y-%m-%d, %H:%M:%S")))
         user = os.getlogin() if hasattr(os, 'getlogin') else os.environ.get('USER', 'N/A')
@@ -1049,7 +1049,7 @@ if __name__ == "__main__":
         if not all_fasta_qids:
             raise RuntimeError("No query IDs found in {}. Exiting.".format(params['q']))
         
-        log.write("\nFound {} unique queries in {}.\n".format(len(all_fasta_qids), os.path.basename(params['q']))); log.flush()
+        log.write("\nFound {} unique queries in {}: {}\n".format(len(all_fasta_qids), os.path.basename(params['q']),all_fasta_qids)); log.flush()
         params['qid_original_from_fasta'] = all_fasta_qids
 
         query_count, element_count, analysis_summary = main(params, qseq_content, log, blast_log_fh)
